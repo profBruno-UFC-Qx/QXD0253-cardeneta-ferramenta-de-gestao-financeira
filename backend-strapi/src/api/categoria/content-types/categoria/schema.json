@@ -1,0 +1,12 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categorias",
+  "info": { "singularName": "categoria", "pluralName": "categorias", "displayName": "Categorias" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "nome": { "type": "string", "required": true },
+    "descricao": { "type": "text" },
+    "produtos": { "type": "relation", "relation": "oneToMany",
+                "target": "api::produto.produto", "mappedBy": "categoria"}
+  }
+}
