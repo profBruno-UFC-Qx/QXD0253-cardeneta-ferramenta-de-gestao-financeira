@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha conta | Caderneta</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/enderecos.js" defer></script>
+  <script src="js/perfil.js" defer></script>
+</head>
+<body>
+  <header class="topo">
+    <a class="marca" href="index.html"><span class="marca-icone">L</span><span>Caderneta</span></a>
+    <nav class="nav-acoes" aria-label="Conta">
+      <a class="link-topo" href="index.html">Cardápio</a>
+      <button id="btn-sair" class="botao botao-secundario botao-pequeno" type="button">Sair</button>
+    </nav>
+  </header>
+  <main class="container perfil-container">
+    <div class="cabecalho-perfil">
+      <div><p class="sobretitulo">Área do cliente</p><h1>Minha conta</h1></div>
+      <p class="texto-secundario">Gerencie seu perfil e seus endereços de entrega.</p>
+    </div>
+
+    <section class="perfil-grade">
+      <form id="form-conta" class="painel-cartao">
+        <div class="painel-titulo"><div><h2>Meus dados</h2><p>Atualize suas informações pessoais.</p></div></div>
+        <div id="erro-conta" class="alerta erro" role="alert" hidden></div>
+        <div class="formulario">
+          <label class="campo-grupo" for="u-nome">Nome completo
+            <input id="u-nome" type="text" required maxlength="120" autocomplete="name">
+          </label>
+          <label class="campo-grupo" for="u-email">E-mail
+            <input id="u-email" type="email" disabled>
+          </label>
+          <div class="form-linha">
+            <label class="campo-grupo" for="u-cpf">CPF
+              <input id="u-cpf" type="text" inputmode="numeric" data-mascara="cpf" maxlength="14">
+            </label>
+            <label class="campo-grupo" for="u-telefone">Telefone
+              <input id="u-telefone" type="tel" required inputmode="tel" data-mascara="telefone" maxlength="16">
+            </label>
+          </div>
+          <button class="botao botao-principal" type="submit">Salvar dados</button>
+        </div>
+      </form>
+
+      <section class="painel-cartao" aria-labelledby="titulo-enderecos">
+        <div class="painel-titulo">
+          <div><h2 id="titulo-enderecos">Meus endereços</h2><p>Endereços só ficam visíveis para sua conta.</p></div>
+          <button id="btn-novo-endereco" class="botao botao-secundario botao-pequeno" type="button">+ Novo</button>
+        </div>
+        <div id="lista-enderecos" class="lista-enderecos" aria-live="polite"><p class="mensagem">Carregando endereços…</p></div>
+        <form id="form-endereco" class="formulario formulario-endereco" hidden>
+          <input id="end-id" type="hidden">
+          <h3 id="titulo-form-endereco">Novo endereço</h3>
+          <div class="form-linha">
+            <label class="campo-grupo" for="end-rotulo">Apelido
+              <select id="end-rotulo"><option>Casa</option><option>Trabalho</option><option>Outro</option></select>
+            </label>
+            <label class="campo-grupo" for="end-cep">CEP
+              <input id="end-cep" inputmode="numeric" maxlength="9" placeholder="00000-000">
+            </label>
+          </div>
+          <label class="campo-grupo" for="end-destinatario">Quem vai receber
+            <input id="end-destinatario" required maxlength="120" autocomplete="name">
+          </label>
+          <label class="campo-grupo" for="end-telefone">Telefone de quem recebe
+            <input id="end-telefone" type="tel" inputmode="tel" data-mascara="telefone" maxlength="16">
+          </label>
+          <label class="campo-grupo" for="end-rua">Rua
+            <input id="end-rua" required maxlength="200" autocomplete="street-address">
+          </label>
+          <div class="form-linha">
+            <label class="campo-grupo" for="end-numero">Número
+              <input id="end-numero" required maxlength="40">
+            </label>
+            <label class="campo-grupo" for="end-complemento">Complemento
+              <input id="end-complemento" maxlength="120" placeholder="Apto, bloco...">
+            </label>
+          </div>
+          <div class="form-linha">
+            <label class="campo-grupo" for="end-bairro">Bairro
+              <input id="end-bairro" required maxlength="120">
+            </label>
+            <label class="campo-grupo" for="end-cidade">Cidade
+              <input id="end-cidade" maxlength="120">
+            </label>
+          </div>
+          <label class="campo-grupo" for="end-referencia">Ponto de referência
+            <input id="end-referencia" maxlength="200" placeholder="Ex.: perto da praça">
+          </label>
+          <div class="botoes-form">
+            <button id="btn-salvar-endereco" class="botao botao-principal" type="submit">Salvar endereço</button>
+            <button id="btn-cancelar-endereco" class="botao botao-secundario" type="button">Cancelar</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+</body>
+</html>

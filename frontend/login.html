@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | Caderneta</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/login.js" defer></script>
+</head>
+<body class="pagina-auth">
+  <header class="topo">
+    <a class="marca" href="index.html"><span class="marca-icone">L</span><span>Caderneta</span></a>
+    <a class="link-topo" href="index.html">← Cardápio</a>
+  </header>
+  <main class="auth-container">
+    <section class="auth-card">
+      <p class="sobretitulo">Que bom ter você de volta</p>
+      <h1>Entrar</h1>
+      <p class="auth-intro">Use seu e-mail e sua senha para acessar sua conta.</p>
+      <div id="erro" class="alerta erro" role="alert" hidden></div>
+      <form id="form-login" class="formulario">
+        <label class="campo-grupo" for="identifier">E-mail
+          <input id="identifier" name="identifier" type="email" required autocomplete="email" placeholder="voce@exemplo.com">
+        </label>
+        <label class="campo-grupo" for="senha">Senha
+          <input id="senha" name="senha" type="password" required autocomplete="current-password" placeholder="Sua senha">
+        </label>
+        <button id="btn-enviar" class="botao botao-principal botao-largo" type="submit">Entrar</button>
+      </form>
+      <p class="auth-rodape">Ainda não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+    </section>
+  </main>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+</body>
+</html>

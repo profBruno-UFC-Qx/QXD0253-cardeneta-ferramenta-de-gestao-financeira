@@ -14,14 +14,14 @@ async function iniciar() {
   }
 
   try {
-    const resposta = await api(`/produtos/${encodeURIComponent(id)}?populate=*`);
+    const resposta = await api(`/produtos/${encodeURIComponent(id)}?populate=*`, { auth: false });
     const produto = resposta.data;
     if (!produto) throw new Error('Produto não encontrado.');
 
     const imagem = urlImagem(produto.imagem);
     const media = imagem
       ? `<img class="detalhe-imagem" src="${escapar(imagem)}" alt="${escapar(produto.nome)}">`
-      : '<div class="detalhe-imagem imagem-vazia" aria-hidden="true">🍽️</div>';
+      : '<div class="detalhe-imagem imagem-vazia" aria-hidden="true">imagem produto</div>';
     document.title = `${produto.nome} | Cardápio`;
     document.getElementById('produto').innerHTML = `
       ${media}

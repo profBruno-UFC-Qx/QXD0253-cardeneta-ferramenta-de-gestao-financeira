@@ -473,6 +473,47 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiEnderecoEndereco extends Struct.CollectionTypeSchema {
+  collectionName: 'enderecos';
+  info: {
+    displayName: 'Endereco';
+    pluralName: 'enderecos';
+    singularName: 'endereco';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    bairro: Schema.Attribute.String & Schema.Attribute.Required;
+    cep: Schema.Attribute.String;
+    cidade: Schema.Attribute.String;
+    complemento: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    destinatario: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::endereco.endereco'
+    > &
+      Schema.Attribute.Private;
+    numero: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    referencia: Schema.Attribute.String;
+    rotulo: Schema.Attribute.String;
+    rua: Schema.Attribute.String & Schema.Attribute.Required;
+    telefone: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    usuario: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiLanchoneteLanchonete extends Struct.SingleTypeSchema {
   collectionName: 'lanchonetes';
   info: {
@@ -1021,6 +1062,7 @@ export interface PluginUsersPermissionsUser
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    cpf: Schema.Attribute.String & Schema.Attribute.Unique;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1035,6 +1077,7 @@ export interface PluginUsersPermissionsUser
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
+    nome: Schema.Attribute.String;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
@@ -1047,6 +1090,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    telefone: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1071,6 +1115,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::categoria.categoria': ApiCategoriaCategoria;
+      'api::endereco.endereco': ApiEnderecoEndereco;
       'api::lanchonete.lanchonete': ApiLanchoneteLanchonete;
       'api::produto.produto': ApiProdutoProduto;
       'plugin::content-releases.release': PluginContentReleasesRelease;

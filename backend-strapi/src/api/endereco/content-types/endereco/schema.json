@@ -1,0 +1,19 @@
+{
+  "kind": "collectionType",
+  "collectionName": "enderecos",
+  "info": { "singularName": "endereco", "pluralName": "enderecos", "displayName": "Endereco" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "rotulo": { "type": "string" },
+    "destinatario": { "type": "string", "required": true },
+    "telefone": { "type": "string" },
+    "cep": { "type": "string" },
+    "rua": { "type": "string", "required": true },
+    "numero": { "type": "string", "required": true },
+    "complemento": { "type": "string" },
+    "bairro": { "type": "string", "required": true },
+    "cidade": { "type": "string" },
+    "referencia": { "type": "string" },
+    "usuario": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+  }
+}

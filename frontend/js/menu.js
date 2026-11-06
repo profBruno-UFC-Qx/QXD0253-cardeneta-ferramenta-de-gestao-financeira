@@ -59,7 +59,7 @@ function cartaoProduto(produto) {
   const indisponivel = !produto.disponivel;
   return `
     <article class="produto-cartao ${indisponivel ? 'indisponivel' : ''}">
-      <a class="produto-link" href="produto.html?id=${encodeURIComponent(produto.documentId)}" aria-label="Ver ${escapar(produto.nome)}">
+      <a class="produto-link" href="/produto?id=${encodeURIComponent(produto.documentId)}" aria-label="Ver ${escapar(produto.nome)}">
         ${media}
         <div class="produto-info">
           <div class="produto-linha">
@@ -93,9 +93,9 @@ async function iniciar() {
   const lista = document.getElementById('lista-produtos');
   try {
     const [lojaResposta, categoriasResposta, produtosResposta] = await Promise.all([
-      api('/lanchonete?populate=logo'),
-      api('/categorias?sort=nome:asc&pagination[pageSize]=100'),
-      api('/produtos?populate=*&sort=nome:asc&pagination[pageSize]=100'),
+      api('/lanchonete?populate=logo', { auth: false }),
+      api('/categorias?sort=nome:asc&pagination[pageSize]=100', { auth: false }),
+      api('/produtos?populate=*&sort=nome:asc&pagination[pageSize]=100', { auth: false }),
     ]);
     const loja = lojaResposta.data;
     const categorias = categoriasResposta.data || [];
