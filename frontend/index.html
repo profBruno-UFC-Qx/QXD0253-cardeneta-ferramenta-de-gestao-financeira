@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f2">
+  <title>Cardápio | Caderneta</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/menu.js" defer></script>
+</head>
+<body>
+  <header class="topo">
+    <a class="marca" href="index.html" aria-label="Página inicial">
+      <span class="marca-icone" aria-hidden="true">L</span>
+      <span id="nome-loja-topo">Caderneta</span>
+    </a>
+    <span class="etiqueta">Cardápio digital</span>
+  </header>
+
+  <main class="container">
+    <section id="loja-info" class="loja cartao" aria-live="polite">
+      <p class="mensagem">Carregando informações da lanchonete…</p>
+    </section>
+
+    <section class="secao-cardapio" aria-labelledby="titulo-cardapio">
+      <div class="cabecalho-secao">
+        <div>
+          <p class="sobretitulo">Feito na hora, do seu jeito</p>
+          <h1 id="titulo-cardapio">Nosso cardápio</h1>
+        </div>
+        <label class="busca">
+          <span class="sr-only">Buscar produto</span>
+          <span aria-hidden="true">⌕</span>
+          <input id="busca" type="search" placeholder="Buscar no cardápio" autocomplete="off">
+        </label>
+      </div>
+
+      <nav id="categorias" class="categorias" aria-label="Filtrar por categoria"></nav>
+      <p id="resultado" class="texto-secundario" aria-live="polite"></p>
+      <div id="lista-produtos" class="grade-produtos" aria-live="polite">
+        <p class="mensagem cartao">Carregando produtos…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">Cardápio digital · Caderneta</footer>
+</body>
+</html>
