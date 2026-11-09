@@ -1,0 +1,13 @@
+{
+  "kind": "collectionType",
+  "collectionName": "itens_pedido",
+  "info": { "singularName": "item-pedido", "pluralName": "item-pedidos", "displayName": "ItemPedido" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "quantidade": { "type": "integer", "required": true, "min": 1 },
+    "precoUnitario": { "type": "decimal", "required": true, "min": 0 },
+    "nomeProduto": { "type": "string" },
+    "pedido": { "type": "relation", "relation": "manyToOne", "target": "api::pedido.pedido", "inversedBy": "itens" },
+    "produto": { "type": "relation", "relation": "manyToOne", "target": "api::produto.produto" }
+  }
+}

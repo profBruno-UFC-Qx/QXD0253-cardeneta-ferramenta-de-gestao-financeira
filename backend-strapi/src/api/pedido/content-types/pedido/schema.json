@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pedidos",
+  "info": { "singularName": "pedido", "pluralName": "pedidos", "displayName": "Pedido" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "status": { "type": "enumeration", "enum": ["recebido", "em_preparo", "pronto", "em_entrega", "entregue", "cancelado"], "default": "recebido", "required": true },
+    "tipo": { "type": "enumeration", "enum": ["online", "balcao"], "default": "online", "required": true },
+    "modalidade": { "type": "enumeration", "enum": ["mesa", "retirada", "entrega"], "default": "retirada", "required": true },
+    "mesa": { "type": "string" },
+    "entregaNome": { "type": "string" },
+    "entregaTelefone": { "type": "string" },
+    "entregaEndereco": { "type": "text" },
+    "taxaEntrega": { "type": "decimal", "default": 0, "min": 0 },
+    "telefoneContato": { "type": "string" },
+    "formaPagamento": { "type": "enumeration", "enum": ["dinheiro", "pix", "cartao"], "required": true },
+    "observacoes": { "type": "text" },
+    "total": { "type": "decimal", "required": true, "min": 0 },
+    "nomeCliente": { "type": "string" },
+    "cliente": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
+    "itens": { "type": "relation", "relation": "oneToMany", "target": "api::item-pedido.item-pedido", "mappedBy": "pedido" }
+  }
+}

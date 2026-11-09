@@ -514,6 +514,52 @@ export interface ApiEnderecoEndereco extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiItemPedidoItemPedido extends Struct.CollectionTypeSchema {
+  collectionName: 'itens_pedido';
+  info: {
+    displayName: 'ItemPedido';
+    pluralName: 'item-pedidos';
+    singularName: 'item-pedido';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::item-pedido.item-pedido'
+    > &
+      Schema.Attribute.Private;
+    nomeProduto: Schema.Attribute.String;
+    pedido: Schema.Attribute.Relation<'manyToOne', 'api::pedido.pedido'>;
+    precoUnitario: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    produto: Schema.Attribute.Relation<'manyToOne', 'api::produto.produto'>;
+    publishedAt: Schema.Attribute.DateTime;
+    quantidade: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLanchoneteLanchonete extends Struct.SingleTypeSchema {
   collectionName: 'lanchonetes';
   info: {
@@ -550,6 +596,86 @@ export interface ApiLanchoneteLanchonete extends Struct.SingleTypeSchema {
       > &
       Schema.Attribute.DefaultTo<0>;
     telefone: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
+  collectionName: 'pedidos';
+  info: {
+    displayName: 'Pedido';
+    pluralName: 'pedidos';
+    singularName: 'pedido';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    cliente: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    entregaEndereco: Schema.Attribute.Text;
+    entregaNome: Schema.Attribute.String;
+    entregaTelefone: Schema.Attribute.String;
+    formaPagamento: Schema.Attribute.Enumeration<
+      ['dinheiro', 'pix', 'cartao']
+    > &
+      Schema.Attribute.Required;
+    itens: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::item-pedido.item-pedido'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::pedido.pedido'
+    > &
+      Schema.Attribute.Private;
+    mesa: Schema.Attribute.String;
+    modalidade: Schema.Attribute.Enumeration<['mesa', 'retirada', 'entrega']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'retirada'>;
+    nomeCliente: Schema.Attribute.String;
+    observacoes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      [
+        'recebido',
+        'em_preparo',
+        'pronto',
+        'em_entrega',
+        'entregue',
+        'cancelado',
+      ]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'recebido'>;
+    taxaEntrega: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    telefoneContato: Schema.Attribute.String;
+    tipo: Schema.Attribute.Enumeration<['online', 'balcao']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'online'>;
+    total: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1116,7 +1242,9 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::categoria.categoria': ApiCategoriaCategoria;
       'api::endereco.endereco': ApiEnderecoEndereco;
+      'api::item-pedido.item-pedido': ApiItemPedidoItemPedido;
       'api::lanchonete.lanchonete': ApiLanchoneteLanchonete;
+      'api::pedido.pedido': ApiPedidoPedido;
       'api::produto.produto': ApiProdutoProduto;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

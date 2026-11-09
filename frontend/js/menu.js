@@ -57,9 +57,15 @@ function cartaoProduto(produto) {
     ? `<img class="produto-imagem" src="${escapar(imagem)}" alt="${escapar(produto.nome)}" loading="lazy">`
     : '<div class="produto-imagem imagem-vazia" aria-hidden="true">imagem produto</div>';
   const indisponivel = !produto.disponivel;
+  const quantidade = quantidadeNoCarrinho(produto.documentId);
+  const acao = indisponivel
+    ? '<span class="indisponivel-texto">Indisponível</span>'
+    : quantidade
+      ? seletorCarrinho(produto.documentId, quantidade)
+      : `<button class="botao botao-principal botao-adicionar" type="button" data-carrinho-acao="adicionar" data-id="${escapar(produto.documentId)}">+ Adicionar</button>`;
   return `
     <article class="produto-cartao ${indisponivel ? 'indisponivel' : ''}">
-      <a class="produto-link" href="/produto?id=${encodeURIComponent(produto.documentId)}" aria-label="Ver ${escapar(produto.nome)}">
+      <a class="produto-link" href="produto.html?id=${encodeURIComponent(produto.documentId)}" aria-label="Ver ${escapar(produto.nome)}">
         ${media}
         <div class="produto-info">
           <div class="produto-linha">
@@ -68,9 +74,9 @@ function cartaoProduto(produto) {
           </div>
           ${produto.categoria?.nome ? `<span class="produto-categoria">${escapar(produto.categoria.nome)}</span>` : ''}
           ${produto.descricao ? `<p>${escapar(produto.descricao)}</p>` : ''}
-          <span class="produto-acao">${indisponivel ? 'Indisponível' : 'Ver detalhes →'}</span>
         </div>
       </a>
+      <div class="produto-compra">${acao}</div>
     </article>`;
 }
 
@@ -125,6 +131,18 @@ async function iniciar() {
     termoBusca = evento.target.value.trim().toLocaleLowerCase('pt-BR');
     renderProdutos();
   });
+
+  lista.addEventListener('click', (evento) => {
+    const botao = evento.target.closest('[data-carrinho-acao]');
+    if (!botao) return;
+    const id = botao.dataset.id;
+    if (botao.dataset.carrinhoAcao === 'adicionar') {
+      adicionarAoCarrinho(todosProdutos.find((produto) => produto.documentId === id));
+    } else if (botao.dataset.carrinhoAcao === 'mais') alterarQuantidade(id, 1);
+    else if (botao.dataset.carrinhoAcao === 'menos') alterarQuantidade(id, -1);
+    renderProdutos();
+  });
+  document.addEventListener('carrinho:atualizado', renderProdutos);
 }
 
 iniciar();

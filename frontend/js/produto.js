@@ -33,8 +33,23 @@ async function iniciar() {
         <p class="disponibilidade ${produto.disponivel ? 'disponivel' : 'indisponivel-texto'}">
           ${produto.disponivel ? 'Disponível para pedido' : 'Indisponível no momento'}
         </p>
+        ${produto.disponivel ? `<div class="compra-detalhe">
+          <label class="campo-grupo" for="quantidade-produto">Quantidade
+            <input id="quantidade-produto" type="number" min="1" max="50" value="1">
+          </label>
+          <button class="botao botao-principal" id="adicionar-produto" type="button">Adicionar à sacola</button>
+        </div>` : ''}
         <a class="botao botao-principal" href="index.html">Voltar ao cardápio</a>
       </div>`;
+    document.getElementById('adicionar-produto')?.addEventListener('click', () => {
+      const quantidade = Number(document.getElementById('quantidade-produto').value);
+      if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 50) {
+        toast('Escolha uma quantidade entre 1 e 50.', 'erro');
+        return;
+      }
+      adicionarAoCarrinho(produto, quantidade);
+      toast(`${quantidade} ${quantidade === 1 ? 'unidade adicionada' : 'unidades adicionadas'} à sacola.`);
+    });
   } catch (erro) {
     mostrarErro(erro.message || 'Não foi possível carregar este produto.');
   }
