@@ -3,7 +3,6 @@ function redirecionarLogin() {
 }
 
 async function iniciarPerfil() {
-  document.getElementById('btn-sair').addEventListener('click', sair);
   if (!getToken()) {
     redirecionarLogin();
     return;
@@ -26,7 +25,7 @@ async function iniciarPerfil() {
       return;
     }
 
-    const botao = evento.submitter;
+    const botao = evento.submitter || evento.currentTarget.querySelector('[type="submit"]');
     botao.disabled = true;
     try {
       const conta = await api('/conta', {
@@ -51,6 +50,8 @@ async function iniciarPerfil() {
   try {
     const conta = await api('/conta');
     salvarSessao(getToken(), conta);
+    const linkEquipe = document.getElementById('link-pedidos-equipe');
+    if (linkEquipe) linkEquipe.hidden = !['atendente', 'gerente'].includes(conta.role?.type);
     document.getElementById('u-nome').value = conta.nome || '';
     document.getElementById('u-email').value = conta.email || '';
     document.getElementById('u-cpf').value = mascaraCpf(conta.cpf || '');
@@ -63,8 +64,8 @@ async function iniciarPerfil() {
       return;
     }
     toast(erro.message, 'erro');
-    document.getElementById('lista-enderecos').innerHTML = '<p class="mensagem erro">Não foi possível carregar os endereços.</p>';
+    document.getElementById('lista-enderecos').innerHTML = '<p class="small text-danger">Não foi possível carregar os endereços.</p>';
   }
 }
 
-iniciarPerfil();
+if (montarLayout()) iniciarPerfil();

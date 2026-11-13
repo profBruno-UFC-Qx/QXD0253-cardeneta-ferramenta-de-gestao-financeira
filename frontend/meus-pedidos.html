@@ -1,25 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f5f2">
-  <title>Meus pedidos | Caderneta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus pedidos - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/config.js" defer></script>
-  <script src="js/api.js" defer></script>
-  <script src="js/pages/meus-pedidos.js" defer></script>
 </head>
-<body>
-  <header class="topo">
-    <a class="marca" href="index.html"><span class="marca-icone" aria-hidden="true">L</span><span>Caderneta</span></a>
-    <nav class="nav-acoes" aria-label="Navegação"><a class="link-topo" href="index.html">Cardápio</a><a class="link-topo" href="perfil.html">Minha conta</a></nav>
-  </header>
-  <main class="container">
-    <div class="cabecalho-pagina"><div><p class="sobretitulo">Acompanhe seu pedido</p><h1>Meus pedidos</h1></div><a class="link-topo" href="carrinho.html">Sacola</a></div>
-    <p id="estado-pedidos" class="texto-secundario" aria-live="polite">Carregando pedidos…</p>
-    <section id="lista-pedidos" class="lista-pedidos" aria-live="polite"></section>
+
+<body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="authenticated,atendente,gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
+    <h1 class="mb-3 fs-4 fw-bold">Meus pedidos</h1>
+    <div id="lista" class="row g-4 row-cols-lg-2"></div>
   </main>
-  <footer class="rodape">Cardápio digital · Caderneta</footer>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/meus-pedidos.js"></script>
 </body>
+
 </html>

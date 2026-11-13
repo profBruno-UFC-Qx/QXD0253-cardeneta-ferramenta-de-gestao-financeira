@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="atendente,gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+
+  <!-- Trocado container-xl por container-fluid e adicionado p-4 -->
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
+
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1 class="fs-3 fw-bold mb-1">Pedidos</h1>
+        <p class="text-secondary small mb-0"><span id="atualizado">Carregando...</span></p>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <div id="abas" class="d-flex flex-fill gap-2 overflow-x-auto pb-2" style="scrollbar-width:none"></div>
+      <select id="filtro-modalidade" class="form-select w-auto border-0 shadow-sm" aria-label="Filtrar por modalidade">
+        <option value="">Todas as modalidades</option>
+        <option value="mesa">Mesa</option>
+        <option value="retirada">Retirada</option>
+        <option value="entrega">Entrega</option>
+      </select>
+    </div>
+
+    <div id="lista" class="row align-items-start g-4 row-cols-md-2 row-cols-xl-3"></div>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/pedidos.js"></script>
+</body>
+
+</html>

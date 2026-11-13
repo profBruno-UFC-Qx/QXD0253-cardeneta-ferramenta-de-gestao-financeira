@@ -1,48 +1,44 @@
-function renderItensCarrinho() {
+function renderCarrinho() {
   const itens = getCarrinho();
-  const vazio = document.getElementById('vazio');
-  const corpo = document.getElementById('corpo-carrinho');
-  vazio.hidden = itens.length > 0;
-  corpo.hidden = itens.length === 0;
-  document.getElementById('itens').innerHTML = itens.map((item) => `
-    <article class="item-carrinho">
-      ${item.imagem
-      ? `<img class="imagem-carrinho" src="${escapar(item.imagem)}" alt="${escapar(item.nome)}">`
-      : '<div class="imagem-carrinho imagem-vazia" aria-hidden="true">imagem produto</div>'}
-      <div class="item-carrinho-info">
-        <h2>${escapar(item.nome)}</h2>
-        <p>${dinheiro(item.preco)} cada</p>
-        <div class="acoes-carrinho">${seletorCarrinho(item.documentId, item.quantidade)}
-          <button class="remover-item" type="button" data-carrinho-acao="remover" data-id="${escapar(item.documentId)}">Remover</button>
-        </div>
+  document.getElementById('vazio').classList.toggle('d-none', itens.length > 0);
+  document.getElementById('corpo-carrinho').classList.toggle('d-none', itens.length === 0);
+
+  document.getElementById('itens').innerHTML = itens.map((i) => `<div class="card border-0 shadow-sm d-flex align-items-center gap-3 p-3 flex-row">
+    <div class="ratio ratio-1x1 flex-shrink-0 rounded-3 overflow-hidden" style="width:64px">${i.imagem
+      ? `<img src="${esc(i.imagem)}" alt="" class="rounded-3 object-fit-cover">`
+      : semImagemHtml('rounded-3')}</div>
+    <div class="overflow-hidden flex-fill">
+      <p class="text-truncate fw-semibold mb-1">${esc(i.nome)}</p>
+      <p class="text-secondary small mb-2">${dinheiro(i.preco)} cada</p>
+      <div class="mt-2 d-flex align-items-center gap-3">${seletorQuantidade(i.documentId, i.quantidade)}
+        <button type="button" class="btn btn-sm btn-link text-danger text-decoration-none fw-semibold" data-acao="remover" data-id="${esc(i.documentId)}">Remover</button>
       </div>
-      <strong class="preco-linha">${dinheiro(item.preco * item.quantidade)}</strong>
-    </article>`).join('');
+    </div>
+    <strong class="flex-shrink-0">${dinheiro(i.preco * i.quantidade)}</strong>
+  </div>`).join('');
 }
 
-async function iniciarCarrinho() {
-  let loja = null;
-  try {
-    const resposta = await api('/lanchonete?populate=logo', { auth: false });
-    loja = resposta.data;
-  } catch (erro) {
-    toast('Não foi possível carregar a taxa da lanchonete: ' + erro.message, 'erro');
-  }
-
-  renderItensCarrinho();
-  const checkout = montarCheckout(loja, () => window.location.assign('meus-pedidos.html?novo=1'));
-  document.getElementById('itens').addEventListener('click', (evento) => {
-    const botao = evento.target.closest('[data-carrinho-acao]');
-    if (!botao) return;
-    const { id } = botao.dataset;
-    if (botao.dataset.carrinhoAcao === 'mais') alterarQuantidade(id, 1);
-    if (botao.dataset.carrinhoAcao === 'menos') alterarQuantidade(id, -1);
-    if (botao.dataset.carrinhoAcao === 'remover') removerDoCarrinho(id);
+async function iniciar() {
+  const loja = await carregarLoja();
+  renderCarrinho();
+  const checkout = await iniciarCheckout({
+    loja,
+    aoSucesso: () => { window.location.href = ehStaff() ? 'pedidos.html' : 'meus-pedidos.html'; },
   });
-  document.addEventListener('carrinho:atualizado', () => {
-    renderItensCarrinho();
+
+  document.getElementById('itens').addEventListener('click', (e) => {
+    const botao = e.target.closest('[data-acao]');
+    if (!botao) return;
+    const id = botao.dataset.id;
+    if (botao.dataset.acao === 'mais') alterarQuantidade(id, 1);
+    if (botao.dataset.acao === 'menos') alterarQuantidade(id, -1);
+    if (botao.dataset.acao === 'remover') removerDoCarrinho(id);
+    renderCarrinho();
     checkout.atualizar();
   });
 }
 
-iniciarCarrinho();
+if (montarLayout()) {
+  if (ehStaff()) window.location.href = 'pedidos.html';
+  else iniciar();
+}

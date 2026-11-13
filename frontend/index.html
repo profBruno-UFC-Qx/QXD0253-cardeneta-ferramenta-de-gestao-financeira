@@ -1,60 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f5f2">
-  <title>Cardápio | Caderneta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/config.js" defer></script>
-  <script src="js/api.js" defer></script>
-  <script src="js/cart.js" defer></script>
-  <script src="js/session-nav.js" defer></script>
-  <script src="js/menu.js" defer></script>
 </head>
 
-<body>
-  <header class="topo">
-    <a class="marca" href="index.html" aria-label="Página inicial">
-      <span class="marca-icone" aria-hidden="true">L</span>
-      <span id="nome-loja-topo">Caderneta</span>
-    </a>
-    <nav class="nav-acoes" aria-label="Conta e navegação">
-      <span class="etiqueta">Cardápio digital</span>
-      <a class="link-topo" href="carrinho.html">Sacola <span id="badge-carrinho" class="contador" hidden>0</span></a>
-      <a id="link-conta" class="link-topo" href="login.html">Entrar</a>
-      <button id="btn-sair-nav" class="botao botao-secundario botao-pequeno" type="button" hidden>Sair</button>
-    </nav>
-  </header>
-
-  <main class="container">
-    <section id="loja-info" class="loja cartao" aria-live="polite">
-      <p class="mensagem">Carregando informações da lanchonete…</p>
-    </section>
-
-    <section class="secao-cardapio" aria-labelledby="titulo-cardapio">
-      <div class="cabecalho-secao">
-        <div>
-          <p class="sobretitulo">Feito na hora, do seu jeito</p>
-          <h1 id="titulo-cardapio">Nosso cardápio</h1>
-        </div>
-        <label class="busca">
-          <span class="sr-only">Buscar produto</span>
-          <span aria-hidden="true">⌕</span>
-          <input id="busca" type="search" placeholder="Buscar no cardápio" autocomplete="off">
-        </label>
-      </div>
-
-      <nav id="categorias" class="categorias" aria-label="Filtrar por categoria"></nav>
-      <p id="resultado" class="texto-secundario" aria-live="polite"></p>
-      <div id="lista-produtos" class="grade-produtos" aria-live="polite">
-        <p class="mensagem cartao">Carregando produtos…</p>
-      </div>
-    </section>
+<body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
+    <section id="loja-info" class="card mb-3 p-3 p-md-3 border-0 shadow-sm"></section>
+    <div id="categorias" class="mb-3 d-flex gap-2 overflow-x-auto px-0 pb-2" style="scrollbar-width:none"></div>
+    <div id="lista" class="row row-cols-1 g-4 pb-5 mb-2 row-cols-md-2 row-cols-lg-3"></div>
+    <div id="barra-carrinho"
+      class="position-fixed start-50 bottom-0 mb-3 translate-middle-x d-none container-sm d-print-none z-3"></div>
   </main>
-
-  <footer class="rodape">Cardápio digital · Caderneta</footer>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/index.js"></script>
 </body>
 
 </html>

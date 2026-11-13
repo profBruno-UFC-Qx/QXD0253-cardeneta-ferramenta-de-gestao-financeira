@@ -41,7 +41,7 @@ function preencherFormularioEndereco(endereco) {
 function renderEnderecos() {
   const caixa = document.getElementById('lista-enderecos');
   if (!enderecos.length) {
-    caixa.innerHTML = '<p class="mensagem">Você ainda não cadastrou endereços.</p>';
+    caixa.innerHTML = '<p class="text-secondary small mb-0">Você ainda não cadastrou endereços.</p>';
     return;
   }
 
@@ -52,16 +52,16 @@ function renderEnderecos() {
       endereco.cidade,
       endereco.cep ? `CEP ${endereco.cep}` : '',
     ].filter(Boolean).join(' · ');
-    return `<article class="endereco-item">
-      <div class="endereco-texto">
-        <strong>${escapar(endereco.rotulo || 'Endereço')} · ${escapar(endereco.destinatario)}</strong>
-        <p>${escapar(linha)}</p>
-        ${endereco.telefone ? `<small>${escapar(mascaraTelefone(endereco.telefone))}</small>` : ''}
-        ${endereco.referencia ? `<small>Referência: ${escapar(endereco.referencia)}</small>` : ''}
+    return `<article class="card border-0 shadow-sm d-flex flex-column flex-sm-row align-items-start justify-content-between gap-3 p-3">
+      <div class="overflow-hidden">
+        <strong>${esc(endereco.rotulo || 'Endereço')} · ${esc(endereco.destinatario)}</strong>
+        <p class="small mb-1 mt-1">${esc(linha)}</p>
+        ${endereco.telefone ? `<small class="d-block text-secondary">${esc(mascaraTelefone(endereco.telefone))}</small>` : ''}
+        ${endereco.referencia ? `<small class="d-block text-secondary">Referência: ${esc(endereco.referencia)}</small>` : ''}
       </div>
-      <div class="endereco-acoes">
-        <button type="button" class="botao botao-secundario botao-pequeno" data-editar-endereco="${escapar(endereco.documentId)}">Editar</button>
-        <button type="button" class="botao botao-perigo botao-pequeno" data-excluir-endereco="${escapar(endereco.documentId)}">Excluir</button>
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-3" data-editar-endereco="${esc(endereco.documentId)}">Editar</button>
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-3" data-excluir-endereco="${esc(endereco.documentId)}">Excluir</button>
       </div>
     </article>`;
   }).join('');
