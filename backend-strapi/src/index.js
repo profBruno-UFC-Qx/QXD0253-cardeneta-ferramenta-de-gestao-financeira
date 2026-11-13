@@ -26,18 +26,47 @@ const PERMISSOES = {
   ],
   atendente: [
     ...LEITURA_PUBLICA,
-    ...api('pedido', [...LER, 'update']),
+    ...api('produto', ['update']),
+    ...api('pedido', [...LER, 'create', 'update']),
     ...api('item-pedido', ['find']),
     ...api('conta', CONTA),
   ],
 
   gerente: [
     ...LEITURA_PUBLICA,
+    ...api('categoria', CRUD),
+    ...api('produto', CRUD),
     ...api('pedido', CRUD),
     ...api('item-pedido', ['find']),
+    ...api('equipe', ['listar', 'criar', 'atualizar']),
     ...api('conta', CONTA),
+    'plugin::upload.content-api.upload',
   ],
 
+};
+
+const UPLOAD_ACOES = ['upload', 'find', 'findOne', 'destroy']
+  .map((acao) => `plugin::upload.content-api.${acao}`);
+const EQUIPE_ACOES = api('equipe', ['listar', 'criar', 'atualizar']);
+const PERMISSOES_NEGADAS = {
+  public: [
+    ...api('categoria', ['create', 'update', 'delete']),
+    ...api('produto', ['create', 'update', 'delete']),
+    ...EQUIPE_ACOES,
+    ...UPLOAD_ACOES,
+  ],
+  authenticated: [
+    ...api('categoria', ['create', 'update', 'delete']),
+    ...api('produto', ['create', 'update', 'delete']),
+    ...EQUIPE_ACOES,
+    ...UPLOAD_ACOES,
+  ],
+  atendente: [
+    ...api('categoria', ['create', 'update', 'delete']),
+    ...api('produto', ['create', 'delete']),
+    ...EQUIPE_ACOES,
+    ...UPLOAD_ACOES,
+  ],
 };
 
 async function garantirPapel(strapi, name, type, description) {
@@ -63,6 +92,16 @@ async function conceder(strapi, type, acoes) {
   for (const action of acoes) {
     const existente = await permissoes.findOne({ where: { action, role: papel.id } });
     if (!existente) await permissoes.create({ data: { action, role: papel.id } });
+  }
+}
+
+async function revogar(strapi, type, acoes) {
+  const papel = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type } });
+  if (!papel) return;
+  const permissoes = strapi.db.query('plugin::users-permissions.permission');
+  for (const action of acoes) {
+    const existente = await permissoes.findOne({ where: { action, role: papel.id } });
+    if (existente) await permissoes.delete({ where: { id: existente.id } });
   }
 }
 
@@ -180,6 +219,7 @@ module.exports = {
 
 
     for (const [type, acoes] of Object.entries(PERMISSOES)) {
+      await revogar(strapi, type, PERMISSOES_NEGADAS[type] || []);
       await conceder(strapi, type, acoes);
     }
 

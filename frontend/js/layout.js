@@ -1,5 +1,6 @@
 const MENU_PAINEL = [
   { href: 'pedidos.html', icone: 'receipt_long', rotulo: 'Pedidos', papeis: ['atendente', 'gerente'] },
+  { href: 'balcao.html', icone: 'point_of_sale', rotulo: 'Balcão', papeis: ['atendente', 'gerente'] },
   { href: 'index.html', icone: 'storefront', rotulo: 'Cardápio', papeis: ['atendente', 'gerente'] },
 ];
 
@@ -106,7 +107,6 @@ function montarPainel(conteudo) {
     <button type="button" data-sair class="d-flex w-100 align-items-center gap-3 rounded-3 px-3 py-2 small fw-medium text-danger border-0 bg-transparent"><span class="material-symbols-outlined">logout</span>Sair</button></div>`;
 
   const coluna = document.createElement('div');
-  // AQUI ESTAVA O PROBLEMA: removemos o mb-2 e deixamos o flex-fill puro
   coluna.className = 'd-flex min-vh-100 overflow-hidden flex-fill flex-column bg-light';
   conteudo.before(coluna);
   coluna.append(topo, conteudo);

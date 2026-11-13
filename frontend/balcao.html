@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Balcão - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo loja</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="atendente,gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3" aria-live="polite">
+  </div>
+
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-3 p-3 p-md-4 bg-light">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1 class="fs-3 fw-bold mb-1">Balcão</h1>
+        <p class="text-secondary small mb-0">Registre pedidos de mesa, retirada ou entrega.</p>
+      </div>
+      <a href="pedidos.html" class="btn btn-outline-secondary"><span
+          class="material-symbols-outlined align-middle fs-6">receipt_long</span> Ver pedidos</a>
+    </div>
+
+    <div id="aviso-fechada" class="alert alert-warning d-none mb-0" role="alert">A lanchonete está fechada e não está
+      recebendo pedidos.</div>
+
+    <div class="row align-items-start g-3">
+      <section class="vstack gap-3 col-12 col-xl-7" aria-label="Selecionar produtos">
+        <label class="visually-hidden" for="busca">Buscar produto</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white"><span class="material-symbols-outlined fs-5">search</span></span>
+          <input id="busca" type="search" class="form-control" placeholder="Buscar produto" autocomplete="off">
+        </div>
+        <div id="categorias" class="d-flex gap-2 overflow-x-auto pb-2" aria-label="Filtrar por categoria"></div>
+        <div id="lista" class="row row-cols-2 g-3 row-cols-md-3" aria-live="polite"></div>
+      </section>
+
+      <aside id="painel-pedido" class="vstack gap-3 col-12 col-xl-5" aria-label="Resumo e finalização do pedido">
+        <section class="card border-0 shadow-sm p-3 p-md-4">
+          <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+            <h2 class="fs-5 fw-bold mb-0">Itens do pedido</h2>
+            <span id="contador-itens" class="badge text-bg-light">0 itens</span>
+          </div>
+          <div id="itens" class="vstack gap-3"></div>
+          <p id="itens-vazios" class="text-secondary small mb-0">Toque em um produto para adicioná-lo ao pedido.</p>
+          <div class="border-top border-secondary-subtle mt-3 pt-3">
+            <div class="d-flex justify-content-between small"><span class="text-secondary">Subtotal</span><span
+                id="subtotal">R$ 0,00</span></div>
+            <div id="linha-taxa" class="d-none justify-content-between mt-2 small"><span class="text-secondary">Taxa de
+                entrega</span><span id="taxa-entrega">Grátis</span></div>
+            <div class="d-flex justify-content-between fw-bold mt-2"><span>Total</span><span id="total">R$ 0,00</span>
+            </div>
+            <p class="text-secondary small mt-2 mb-0">O valor final é calculado novamente pelo servidor.</p>
+          </div>
+        </section>
+
+        <form id="form-balcao" class="card border-0 shadow-sm vstack gap-3 p-3 p-md-4" novalidate>
+          <h2 class="fs-5 fw-bold mb-0">Dados do pedido</h2>
+
+          <fieldset>
+            <legend class="form-label fw-semibold">Como será o pedido?</legend>
+            <div class="row row-cols-3 g-2">
+              <div class="col"><input class="btn-check" type="radio" name="modalidade" id="modo-mesa"
+                  value="mesa"><label class="btn btn-outline-secondary w-100" for="modo-mesa">Mesa</label></div>
+              <div class="col"><input class="btn-check" type="radio" name="modalidade" id="modo-retirada"
+                  value="retirada" checked><label class="btn btn-outline-secondary w-100"
+                  for="modo-retirada">Retirada</label></div>
+              <div class="col"><input class="btn-check" type="radio" name="modalidade" id="modo-entrega"
+                  value="entrega"><label class="btn btn-outline-secondary w-100" for="modo-entrega">Entrega</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <div id="bloco-mesa" class="d-none">
+            <label for="mesa" class="form-label">Número ou identificação da mesa</label>
+            <input id="mesa" class="form-control" maxlength="20" placeholder="Ex.: 4">
+          </div>
+
+          <div>
+            <label for="nome-cliente" class="form-label">Nome do cliente <span id="nome-obrigatorio"
+                class="text-secondary small">(opcional)</span></label>
+            <input id="nome-cliente" class="form-control" maxlength="120" autocomplete="name">
+          </div>
+          <div>
+            <label for="telefone-contato" class="form-label">Telefone de contato <span id="telefone-obrigatorio"
+                class="text-secondary small">(opcional)</span></label>
+            <input id="telefone-contato" class="form-control" inputmode="tel" autocomplete="tel" data-mascara="telefone"
+              placeholder="(88) 99999-9999">
+          </div>
+          <div id="bloco-entrega" class="d-none">
+            <label for="endereco-entrega" class="form-label">Endereço de entrega</label>
+            <textarea id="endereco-entrega" class="form-control" rows="2" maxlength="400"
+              placeholder="Rua, número, bairro e referência"></textarea>
+          </div>
+
+          <fieldset>
+            <legend class="form-label fw-semibold">Forma de pagamento</legend>
+            <div class="row row-cols-3 g-2">
+              <div class="col"><input class="btn-check" type="radio" name="pagamento" id="pg-pix" value="pix"
+                  checked><label class="btn btn-outline-secondary w-100" for="pg-pix">Pix</label></div>
+              <div class="col"><input class="btn-check" type="radio" name="pagamento" id="pg-dinheiro"
+                  value="dinheiro"><label class="btn btn-outline-secondary w-100" for="pg-dinheiro">Dinheiro</label>
+              </div>
+              <div class="col"><input class="btn-check" type="radio" name="pagamento" id="pg-cartao"
+                  value="cartao"><label class="btn btn-outline-secondary w-100" for="pg-cartao">Cartão</label></div>
+            </div>
+            <p class="text-secondary small mt-2 mb-0">O pagamento é apenas registrado; não é processado pelo sistema.
+            </p>
+          </fieldset>
+
+          <div>
+            <label for="observacoes" class="form-label">Observações <span
+                class="text-secondary small">(opcional)</span></label>
+            <textarea id="observacoes" class="form-control" rows="2" maxlength="400"
+              placeholder="Ex.: sem cebola"></textarea>
+          </div>
+          <button id="btn-finalizar" type="submit" class="btn btn-warning w-100 fw-semibold" disabled>Registrar
+            pedido</button>
+        </form>
+      </aside>
+    </div>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/balcao.js"></script>
+</body>
+
+</html>
