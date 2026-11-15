@@ -41,6 +41,7 @@ const PERMISSOES = {
     ...api('equipe', ['listar', 'criar', 'atualizar']),
     ...api('conta', CONTA),
     'plugin::upload.content-api.upload',
+    'plugin::upload.content-api.destroy',
   ],
 
 };

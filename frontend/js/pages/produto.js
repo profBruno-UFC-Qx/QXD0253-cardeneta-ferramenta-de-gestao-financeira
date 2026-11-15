@@ -1,73 +1,101 @@
 let produto = null;
 let quantidade = 1;
+let fotosProduto = [];
+let fotoAtiva = 0;
+
+function prepararFotos() {
+  const todas = [produto?.imagem, ...(Array.isArray(produto?.galeria) ? produto.galeria : produto?.galeria?.data || [])]
+    .filter((foto) => foto?.url);
+  const vistos = new Set();
+  fotosProduto = todas.filter((foto) => {
+    const chave = foto.id || foto.documentId || foto.url;
+    if (vistos.has(chave)) return false;
+    vistos.add(chave);
+    return true;
+  });
+  fotoAtiva = 0;
+}
+
+function renderFotos() {
+  const atual = fotosProduto[fotoAtiva];
+  const destaque = atual
+    ? `<img id="foto-principal" src="${esc(urlImagem(atual))}" alt="${esc(produto.nome)}" class="img-produto">`
+    : semImagemHtml('h-100 w-100');
+  const miniaturas = fotosProduto.length > 1 ? `<div class="d-flex gap-2 overflow-auto pt-2" aria-label="Imagens do produto">
+    ${fotosProduto.map((foto, indice) => `<button type="button" class="btn p-0 border ${indice === fotoAtiva ? 'border-warning border-2' : 'border-secondary-subtle'} flex-shrink-0" data-foto="${indice}" aria-label="Ver imagem ${indice + 1}"><img src="${esc(urlImagem(foto))}" alt="" class="object-fit-cover rounded" style="width:72px;height:64px"></button>`).join('')}
+  </div>` : '';
+  return `<div><div class="ratio ratio-4x3 overflow-hidden rounded-3 bg-warning-subtle">${destaque}</div>${miniaturas}</div>`;
+}
 
 function renderProduto() {
-  const imagem = urlImagem(produto.imagem);
+  prepararFotos();
   const preco = Number(produto.preco);
   const podeComprar = produto.disponivel && !ehStaff();
-
   document.getElementById('produto').innerHTML = `
-    <div class="col-12 col-md-6">
-      <div class="ratio ratio-1x1 rounded-4 overflow-hidden bg-white shadow-sm">
-        ${imagem
-      ? `<img src="${esc(imagem)}" alt="${esc(produto.nome)}" class="w-100 h-100 object-fit-cover">`
-      : semImagemHtml('w-100 h-100')}
-      </div>
-    </div>
-    <div class="col-12 col-md-6 d-flex flex-column gap-3">
+    <div class="col">${renderFotos()}</div>
+    <div class="col vstack gap-3">
       <div>
-        ${produto.categoria ? `<span class="d-inline-flex rounded-pill bg-warning px-3 py-2 small fw-semibold text-dark mb-2">${esc(produto.categoria.nome)}</span>` : ''}
-        <h1 class="fs-2 fw-bold mb-2">${esc(produto.nome)}</h1>
-        <p class="fs-4 fw-bold text-warning-emphasis mb-0">${dinheiro(preco)}</p>
+        ${produto.categoria ? `<span class="badge bg-warning-subtle text-dark">${esc(produto.categoria.nome)}</span>` : ''}
+        <h1 class="fs-2 fw-bold mt-2 mb-1">${esc(produto.nome)}</h1>
+        <p class="fs-3 fw-bold mb-0">${dinheiro(preco)}</p>
       </div>
-      ${produto.descricao ? `<p class="text-secondary lh-base mb-0">${esc(produto.descricao)}</p>` : ''}
+      ${produto.descricao ? `<p class="text-secondary mb-0">${esc(produto.descricao)}</p>` : ''}
       ${podeComprar
-      ? `<div class="d-flex align-items-center gap-3 mt-3">
-            <div class="d-inline-flex align-items-center rounded-3 border border-secondary-subtle bg-white">
-              <button type="button" data-qtd="-1" class="btn btn-light d-flex align-items-center justify-content-center rounded-start py-2 px-3" aria-label="Diminuir"><span class="material-symbols-outlined">remove</span></button>
-              <span id="qtd" class="px-3 text-center fw-semibold fs-5">${quantidade}</span>
-              <button type="button" data-qtd="1" class="btn btn-light d-flex align-items-center justify-content-center rounded-end py-2 px-3" aria-label="Aumentar"><span class="material-symbols-outlined">add</span></button>
+      ? `<div class="d-flex align-items-center gap-3">
+            <div class="input-group" style="max-width:136px">
+              <button type="button" data-qtd="-1" class="btn btn-outline-secondary" aria-label="Diminuir quantidade"><span class="material-symbols-outlined">remove</span></button>
+              <span id="qtd" class="form-control text-center" aria-live="polite">${quantidade}</span>
+              <button type="button" data-qtd="1" class="btn btn-outline-secondary" aria-label="Aumentar quantidade"><span class="material-symbols-outlined">add</span></button>
             </div>
-            <button id="btn-adicionar" type="button" class="btn btn-warning btn-lg flex-fill fw-bold d-flex align-items-center justify-content-center gap-2 text-dark">
-              <span class="material-symbols-outlined">add_shopping_cart</span>
-              Adicionar · <span id="subtotal">${dinheiro(preco * quantidade)}</span>
-            </button>
+            <button id="btn-adicionar" type="button" class="btn btn-warning flex-fill fw-semibold"><span class="material-symbols-outlined align-middle fs-5">add_shopping_cart</span> Adicionar · <span id="subtotal">${dinheiro(preco * quantidade)}</span></button>
           </div>`
       : produto.disponivel
-        ? '<p class="text-secondary mb-0">A equipe pode consultar o produto, mas os pedidos são feitos pela área do cliente.</p>'
-        : '<div class="rounded-3 bg-danger-subtle p-3 small fw-semibold text-danger-emphasis">Produto indisponível no momento</div>'}
+        ? '<p class="text-secondary small">A equipe pode consultar o produto, mas os pedidos são feitos pela área do cliente.</p>'
+        : '<div class="alert alert-secondary mb-0">Produto indisponível no momento.</div>'}
     </div>`;
 }
 
 function atualizarQuantidade() {
-  document.getElementById('qtd').textContent = quantidade;
-  document.getElementById('subtotal').textContent = dinheiro(Number(produto.preco) * quantidade);
+  const qtd = document.getElementById('qtd');
+  const subtotal = document.getElementById('subtotal');
+  if (qtd) qtd.textContent = quantidade;
+  if (subtotal) subtotal.textContent = dinheiro(Number(produto.preco) * quantidade);
 }
 
 async function iniciar() {
   const id = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get('id');
   const caixa = document.getElementById('produto');
   if (!id) {
-    caixa.innerHTML = `<div class="col-12">${estadoVazio('search_off', 'Produto não encontrado', '<a href="index.html" class="fw-semibold text-warning-emphasis">Voltar ao cardápio</a>')}</div>`;
+    caixa.innerHTML = estadoVazio('search_off', 'Produto não encontrado', '<a href="index.html" class="link-dark fw-semibold">Voltar ao cardápio</a>');
     return;
   }
   try {
-    const res = await api('/produtos/' + encodeURIComponent(id) + '?populate=*', { auth: false });
-    produto = res.data;
+    const resposta = await api('/produtos/' + encodeURIComponent(id) + '?populate=*', { auth: false });
+    produto = resposta.data;
     document.title = `${produto.nome} - Caderneta`;
     renderProduto();
   } catch {
-    caixa.innerHTML = `<div class="col-12">${estadoVazio('search_off', 'Produto não encontrado', '<a href="index.html" class="fw-semibold text-warning-emphasis">Voltar ao cardápio</a>')}</div>`;
+    caixa.innerHTML = estadoVazio('search_off', 'Produto não encontrado', '<a href="index.html" class="link-dark fw-semibold">Voltar ao cardápio</a>');
     return;
   }
 
-  caixa.addEventListener('click', (e) => {
-    const qtd = e.target.closest('[data-qtd]');
-    if (qtd) {
-      quantidade = Math.min(50, Math.max(1, quantidade + Number(qtd.dataset.qtd)));
+  caixa.addEventListener('click', (evento) => {
+    const quantidadeBotao = evento.target.closest('[data-qtd]');
+    const miniatura = evento.target.closest('[data-foto]');
+    if (quantidadeBotao) {
+      quantidade = Math.min(50, Math.max(1, quantidade + Number(quantidadeBotao.dataset.qtd)));
       atualizarQuantidade();
     }
-    if (e.target.closest('#btn-adicionar')) {
+    if (miniatura) {
+      fotoAtiva = Number(miniatura.dataset.foto);
+      const imagem = document.getElementById('foto-principal');
+      if (imagem) imagem.src = urlImagem(fotosProduto[fotoAtiva]);
+      caixa.querySelectorAll('[data-foto]').forEach((botao, indice) => {
+        botao.classList.toggle('border-warning', indice === fotoAtiva);
+        botao.classList.toggle('border-2', indice === fotoAtiva);
+      });
+    }
+    if (evento.target.closest('#btn-adicionar')) {
       for (let i = 0; i < quantidade; i++) adicionarAoCarrinho(produto);
       toast(`${quantidade}× ${produto.nome} no carrinho`);
       quantidade = 1;

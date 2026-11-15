@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Categorias - Caderneta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
+  </div>
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
+    <header class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1 class="fs-3 fw-bold mb-1">Categorias</h1>
+        <p id="resumo" class="text-secondary small mb-0">Carregando...</p>
+      </div>
+      <button id="btn-novo" type="button" class="btn btn-warning fw-semibold"><span
+          class="material-symbols-outlined align-middle fs-5">add</span> Nova categoria</button>
+    </header>
+    <section id="lista" class="card border-0 shadow-sm" aria-live="polite"></section>
+
+    <dialog id="dlg-categoria" class="w-100 border-0 rounded-3 p-0 shadow" style="max-width:520px">
+      <form id="dlg-categoria-form" class="vstack gap-3 p-3 p-md-4">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+          <h2 id="dlg-categoria-titulo" class="fs-5 fw-bold mb-0">Nova categoria</h2>
+          <button type="button" data-fechar class="btn btn-light p-2" aria-label="Fechar"><span
+              class="material-symbols-outlined">close</span></button>
+        </div>
+        <div><label class="form-label" for="c-nome">Nome</label><input id="c-nome" class="form-control" maxlength="80"
+            required></div>
+        <div><label class="form-label" for="c-descricao">Descrição</label><textarea id="c-descricao"
+            class="form-control" rows="3" maxlength="500"></textarea></div>
+        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+          <button type="button" data-fechar class="btn btn-outline-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-warning fw-semibold">Salvar categoria</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/categorias.js"></script>
+</body>
+
+</html>
