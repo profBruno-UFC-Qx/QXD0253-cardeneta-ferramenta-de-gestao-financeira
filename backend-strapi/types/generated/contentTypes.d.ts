@@ -473,6 +473,55 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDespesaDespesa extends Struct.CollectionTypeSchema {
+  collectionName: 'despesas';
+  info: {
+    displayName: 'Despesa';
+    pluralName: 'despesas';
+    singularName: 'despesa';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    data: Schema.Attribute.Date & Schema.Attribute.Required;
+    descricao: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+        minLength: 2;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::despesa.despesa'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    registradaPor: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    tipo: Schema.Attribute.Enumeration<['insumo', 'conta_fixa', 'outros']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'outros'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    valor: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0.01;
+        },
+        number
+      >;
+  };
+}
+
 export interface ApiEnderecoEndereco extends Struct.CollectionTypeSchema {
   collectionName: 'enderecos';
   info: {
@@ -1241,6 +1290,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::categoria.categoria': ApiCategoriaCategoria;
+      'api::despesa.despesa': ApiDespesaDespesa;
       'api::endereco.endereco': ApiEnderecoEndereco;
       'api::item-pedido.item-pedido': ApiItemPedidoItemPedido;
       'api::lanchonete.lanchonete': ApiLanchoneteLanchonete;

@@ -5,6 +5,8 @@ const LER = ['find', 'findOne'];
 const CRUD = ['find', 'findOne', 'create', 'update', 'delete'];
 
 const CONTA = ['me', 'atualizar'];
+const FINANCEIRO = api('despesa', CRUD);
+const RELATORIOS = ['api::relatorio.relatorio.resumo'];
 
 
 const LEITURA_PUBLICA = [
@@ -39,6 +41,8 @@ const PERMISSOES = {
     ...api('pedido', CRUD),
     ...api('item-pedido', ['find']),
     ...api('equipe', ['listar', 'criar', 'atualizar']),
+    ...FINANCEIRO,
+    ...RELATORIOS,
     ...api('conta', CONTA),
     'plugin::upload.content-api.upload',
     'plugin::upload.content-api.destroy',
@@ -54,18 +58,24 @@ const PERMISSOES_NEGADAS = {
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
+    ...FINANCEIRO,
+    ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
   authenticated: [
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
+    ...FINANCEIRO,
+    ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
   atendente: [
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'delete']),
     ...EQUIPE_ACOES,
+    ...FINANCEIRO,
+    ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
 };

@@ -1,0 +1,13 @@
+{
+  "kind": "collectionType",
+  "collectionName": "despesas",
+  "info": { "singularName": "despesa", "pluralName": "despesas", "displayName": "Despesa" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "descricao": { "type": "string", "required": true, "minLength": 2, "maxLength": 160 },
+    "valor": { "type": "decimal", "required": true, "min": 0.01 },
+    "data": { "type": "date", "required": true },
+    "tipo": { "type": "enumeration", "enum": ["insumo", "conta_fixa", "outros"], "required": true, "default": "outros" },
+    "registradaPor": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+  }
+}

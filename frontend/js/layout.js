@@ -1,4 +1,7 @@
 const MENU_PAINEL = [
+  { href: 'dashboard.html', icone: 'space_dashboard', rotulo: 'Dashboard', papeis: ['gerente'] },
+  { href: 'financeiro.html', icone: 'account_balance_wallet', rotulo: 'Financeiro', papeis: ['gerente'] },
+  { href: 'relatorios.html', icone: 'bar_chart', rotulo: 'Relatórios', papeis: ['gerente'] },
   { href: 'pedidos.html', icone: 'receipt_long', rotulo: 'Pedidos', papeis: ['atendente', 'gerente'] },
   { href: 'balcao.html', icone: 'point_of_sale', rotulo: 'Balcão', papeis: ['atendente', 'gerente'] },
   { href: 'index.html', icone: 'storefront', rotulo: 'Cardápio', papeis: ['atendente', 'gerente'] },

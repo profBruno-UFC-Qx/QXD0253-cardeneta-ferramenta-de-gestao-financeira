@@ -60,7 +60,7 @@ function paginaAtual() {
 }
 
 function paginaInicial() {
-  return ehStaff() ? 'pedidos.html' : 'index.html';
+  return papel() === 'gerente' ? 'dashboard.html' : ehStaff() ? 'pedidos.html' : 'index.html';
 }
 
 function exigirPapel(papeis) {
