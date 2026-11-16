@@ -3,6 +3,8 @@ let categorias = [];
 let arquivoPrincipal = null;
 let urlPrevista = null;
 let arquivosGaleria = [];
+let catalogoAdicionais = [];
+let adicionaisRascunho = [];
 const midiasRemovendo = new Set();
 const gerente = papel() === 'gerente';
 
@@ -59,18 +61,35 @@ function renderProdutos() {
 }
 
 async function carregar() {
-  const [cats, prods] = await Promise.all([
+  const [cats, prods, adicionais] = await Promise.all([
     apiTodos('/categorias', { sort: 'nome:asc' }),
     apiTodos('/produtos', { populate: '*', sort: 'nome:asc' }),
+    gerente ? apiTodos('/adicionais', { sort: 'nome:asc' }) : Promise.resolve([]),
   ]);
   categorias = cats;
   produtos = prods;
+  catalogoAdicionais = adicionais;
   const opcoes = categorias.map((c) => `<option value="${esc(c.documentId)}">${esc(c.nome)}</option>`).join('');
   porId('p-categoria').innerHTML = '<option value="">Sem categoria</option>' + opcoes;
   porId('filtro-categoria').innerHTML = '<option value="">Todas as categorias</option>' + opcoes;
   renderProdutos();
 }
 
+function lerAdicionaisDoFormulario() {
+  return [...porId('p-adicionais-lista').querySelectorAll('[data-adicional-selecao]:checked')]
+    .map((input) => input.dataset.adicionalSelecao);
+}
+function renderAdicionais() {
+  const selecionados = new Set(adicionaisRascunho);
+  porId('p-adicionais-lista').innerHTML = catalogoAdicionais.length ? catalogoAdicionais.map((adicional) => {
+    const selecionado = selecionados.has(adicional.documentId);
+    const ativo = adicional.disponivel !== false;
+    return `<label class="d-flex align-items-center justify-content-between gap-3 rounded-3 bg-white border p-2 ${ativo ? '' : 'opacity-75'}">
+      <span class="form-check d-flex align-items-center gap-2 mb-0"><input class="form-check-input mt-0" type="checkbox" data-adicional-selecao="${esc(adicional.documentId)}" ${selecionado ? 'checked' : ''} ${!ativo && !selecionado ? 'disabled' : ''}><span>${esc(adicional.nome)}${ativo ? '' : ' (inativo)'}</span></span>
+      <span class="small text-secondary">${dinheiro(adicional.preco)}</span>
+    </label>`;
+  }).join('') : '<p class="small text-secondary mb-0">Cadastre primeiro os adicionais no menu Adicionais.</p>';
+}
 function mostrarImagem(url) {
   const previa = porId('p-previa');
   previa.innerHTML = url
@@ -104,6 +123,9 @@ function abrir(produto = null) {
   porId('p-preco').value = produto?.preco ?? '';
   porId('p-categoria').value = produto?.categoria?.documentId || '';
   porId('p-disponivel').checked = produto ? Boolean(produto.disponivel) : true;
+  const relacaoAdicionais = Array.isArray(produto?.adicionaisCatalogo) ? produto.adicionaisCatalogo : produto?.adicionaisCatalogo?.data || [];
+  adicionaisRascunho = relacaoAdicionais.map((a) => a.documentId).filter(Boolean);
+  renderAdicionais();
   porId('p-arquivo').value = '';
   porId('p-galeria-arquivos').value = '';
   arquivoPrincipal = null;
@@ -189,6 +211,7 @@ async function salvar(evento) {
     preco: Number(porId('p-preco').value),
     disponivel: porId('p-disponivel').checked,
     categoria: porId('p-categoria').value || null,
+    ...(gerente ? { adicionaisCatalogo: { set: lerAdicionaisDoFormulario() } } : {}),
   };
   const botao = form.querySelector('[type="submit"]');
   botao.disabled = true;
@@ -253,8 +276,17 @@ async function alternarDisponibilidade(evento) {
 
 async function iniciar() {
   porId('btn-novo').classList.toggle('d-none', !gerente);
+  porId('secao-adicionais')?.classList.toggle('d-none', !gerente);
   porId('btn-novo').addEventListener('click', () => abrir());
   porId('dlg-produto-form').addEventListener('submit', salvar);
+  porId('p-adicionais-lista').addEventListener('change', (evento) => {
+    if (!evento.target.matches('[data-adicional-selecao]')) return;
+    const selecionados = porId('p-adicionais-lista').querySelectorAll('[data-adicional-selecao]:checked');
+    if (selecionados.length > 30) {
+      evento.target.checked = false;
+      toast('Um produto pode ter até 30 adicionais', 'erro');
+    }
+  });
   porId('grade').addEventListener('click', acaoProduto);
   porId('grade').addEventListener('change', alternarDisponibilidade);
   porId('busca').addEventListener('input', renderProdutos);

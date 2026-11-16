@@ -35,7 +35,7 @@ module.exports = factories.createCoreController('api::endereco.endereco', () => 
       return ctx.badRequest('Preencha destinatário, rua, número e bairro');
     }
     const endereco = await strapi.documents('api::endereco.endereco').create({
-      data: { ...dados, usuario: ctx.state.user.documentId },
+      data: { ...dados, usuario: ctx.state.user.id },
     });
     const limpo = await this.sanitizeOutput(endereco, ctx);
     ctx.status = 201;

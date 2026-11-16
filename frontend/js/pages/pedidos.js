@@ -47,7 +47,7 @@ function cartaoPedido(p) {
       ${badgeStatus(p.status)}
     </div>
     ${detalheModalidade(p, true)}
-    <ul class="mt-3 mb-0 vstack gap-2 small ps-3">${(p.itens || []).map((i) => `<li><strong>${i.quantidade}×</strong> ${esc(i.nomeProduto || 'Item removido')}</li>`).join('')}</ul>
+    <ul class="mt-3 mb-0 vstack gap-2 small ps-3">${(p.itens || []).map((i) => `<li><strong>${i.quantidade}×</strong> ${esc(i.nomeProduto || 'Item removido')}${Array.isArray(i.adicionais) && i.adicionais.length ? `<ul class="text-secondary">${i.adicionais.map((a) => `<li>${Math.max(1, Number(a.quantidade) || 1)}× ${esc(a.nome)} · ${dinheiro(Number(a.preco) * Math.max(1, Number(a.quantidade) || 1))}</li>`).join('')}</ul>` : ''}</li>`).join('')}</ul>
     ${p.observacoes ? `<p class="mt-3 mb-0 rounded-3 bg-warning-subtle p-3 small text-warning-emphasis">${esc(p.observacoes)}</p>` : ''}
     <div class="mt-3 d-flex align-items-center justify-content-between border-top border-secondary-subtle pt-3 small">
       <span class="text-secondary">${esc(PAGAMENTOS[p.formaPagamento] || p.formaPagamento)}</span>

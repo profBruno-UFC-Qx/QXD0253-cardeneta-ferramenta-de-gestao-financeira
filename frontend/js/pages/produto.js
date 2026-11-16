@@ -30,6 +30,7 @@ function renderFotos() {
 function renderProduto() {
   prepararFotos();
   const preco = Number(produto.preco);
+  const adicionais = (Array.isArray(produto.adicionaisCatalogo) ? produto.adicionaisCatalogo : []).filter((a) => a.disponivel !== false);
   const podeComprar = produto.disponivel && !ehStaff();
   document.getElementById('produto').innerHTML = `
     <div class="col">${renderFotos()}</div>
@@ -41,7 +42,7 @@ function renderProduto() {
       </div>
       ${produto.descricao ? `<p class="text-secondary mb-0">${esc(produto.descricao)}</p>` : ''}
       ${podeComprar
-      ? `<div class="d-flex align-items-center gap-3">
+      ? `${adicionais.length ? `<fieldset class="card border-0 bg-white p-3"><legend class="fs-6 fw-semibold mb-2">Adicionais <span class="small text-secondary fw-normal">(quantidade por unidade)</span></legend><div class="vstack gap-2">${adicionais.map((a) => `<label class="d-flex align-items-center justify-content-between gap-3"><span>${esc(a.nome)} <span class="small text-secondary">· ${dinheiro(a.preco)} cada</span></span><input class="form-control form-control-sm text-center" type="number" min="0" max="50" step="1" value="0" style="width:76px" data-adicional-quantidade="${esc(a.documentId)}" aria-label="Quantidade de ${esc(a.nome)}"></label>`).join('')}</div></fieldset>` : ''}<div class="d-flex align-items-center gap-3">
             <div class="input-group" style="max-width:136px">
               <button type="button" data-qtd="-1" class="btn btn-outline-secondary" aria-label="Diminuir quantidade"><span class="material-symbols-outlined">remove</span></button>
               <span id="qtd" class="form-control text-center" aria-live="polite">${quantidade}</span>
@@ -59,7 +60,12 @@ function atualizarQuantidade() {
   const qtd = document.getElementById('qtd');
   const subtotal = document.getElementById('subtotal');
   if (qtd) qtd.textContent = quantidade;
-  if (subtotal) subtotal.textContent = dinheiro(Number(produto.preco) * quantidade);
+  const extras = [...document.querySelectorAll('[data-adicional-quantidade]')].reduce((soma, input) => {
+    const adicional = (produto.adicionaisCatalogo || []).find((a) => a.documentId === input.dataset.adicionalQuantidade);
+    const quantidadeAdicional = Math.max(0, Math.min(50, Number(input.value) || 0));
+    return soma + Number(adicional?.preco || 0) * quantidadeAdicional;
+  }, 0);
+  if (subtotal) subtotal.textContent = dinheiro((Number(produto.preco) + extras) * quantidade);
 }
 
 async function iniciar() {
@@ -79,6 +85,12 @@ async function iniciar() {
     return;
   }
 
+  caixa.addEventListener('input', (evento) => {
+    if (evento.target.matches('[data-adicional-quantidade]')) {
+      evento.target.value = String(Math.max(0, Math.min(50, Number(evento.target.value) || 0)));
+      atualizarQuantidade();
+    }
+  });
   caixa.addEventListener('click', (evento) => {
     const quantidadeBotao = evento.target.closest('[data-qtd]');
     const miniatura = evento.target.closest('[data-foto]');
@@ -86,6 +98,7 @@ async function iniciar() {
       quantidade = Math.min(50, Math.max(1, quantidade + Number(quantidadeBotao.dataset.qtd)));
       atualizarQuantidade();
     }
+
     if (miniatura) {
       fotoAtiva = Number(miniatura.dataset.foto);
       const imagem = document.getElementById('foto-principal');
@@ -96,9 +109,13 @@ async function iniciar() {
       });
     }
     if (evento.target.closest('#btn-adicionar')) {
-      for (let i = 0; i < quantidade; i++) adicionarAoCarrinho(produto);
+      const selecionados = [...caixa.querySelectorAll('[data-adicional-quantidade]')]
+        .filter((input) => Number(input.value) > 0)
+        .map((input) => ({ id: input.dataset.adicionalQuantidade, quantidade: Number(input.value) }));
+      adicionarAoCarrinho(produto, quantidade, selecionados);
       toast(`${quantidade}× ${produto.nome} no carrinho`);
       quantidade = 1;
+      caixa.querySelectorAll('[data-adicional-quantidade]').forEach((input) => { input.value = '0'; });
       atualizarQuantidade();
     }
   });

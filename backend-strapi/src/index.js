@@ -6,12 +6,14 @@ const CRUD = ['find', 'findOne', 'create', 'update', 'delete'];
 
 const CONTA = ['me', 'atualizar'];
 const FINANCEIRO = api('despesa', CRUD);
+const ADICIONAIS = api('adicional', CRUD);
 const RELATORIOS = ['api::relatorio.relatorio.resumo'];
 
 
 const LEITURA_PUBLICA = [
   ...api('categoria', LER),
   ...api('produto', LER),
+  ...api('adicional', LER),
   ...api('lanchonete', ['find']),
 ];
 
@@ -42,6 +44,7 @@ const PERMISSOES = {
     ...api('item-pedido', ['find']),
     ...api('equipe', ['listar', 'criar', 'atualizar']),
     ...FINANCEIRO,
+    ...ADICIONAIS,
     ...RELATORIOS,
     ...api('conta', CONTA),
     'plugin::upload.content-api.upload',
@@ -59,6 +62,7 @@ const PERMISSOES_NEGADAS = {
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
     ...FINANCEIRO,
+    ...api('adicional', ['create', 'update', 'delete']),
     ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
@@ -67,6 +71,7 @@ const PERMISSOES_NEGADAS = {
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
     ...FINANCEIRO,
+    ...api('adicional', ['create', 'update', 'delete']),
     ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
@@ -75,6 +80,7 @@ const PERMISSOES_NEGADAS = {
     ...api('produto', ['create', 'delete']),
     ...EQUIPE_ACOES,
     ...FINANCEIRO,
+    ...api('adicional', ['create', 'update', 'delete']),
     ...RELATORIOS,
     ...UPLOAD_ACOES,
   ],
@@ -186,6 +192,49 @@ async function criarUsuariosDemo(strapi) {
 
 
 
+async function migrarAdicionaisLegados(strapi) {
+  const produtos = strapi.documents('api::produto.produto');
+  const catalogo = strapi.documents('api::adicional.adicional');
+  let pagina = 1;
+  let migrados = 0;
+  while (true) {
+    const lote = await produtos.findMany({
+      populate: ['adicionaisCatalogo'],
+      pagination: { page: pagina, pageSize: 100 },
+    });
+    if (!lote.length) break;
+    for (const produto of lote) {
+      if (produto.adicionaisMigrados) continue;
+      const ids = new Set((Array.isArray(produto.adicionaisCatalogo) ? produto.adicionaisCatalogo : [])
+        .map((adicional) => adicional.documentId).filter(Boolean));
+      const antigos = Array.isArray(produto.adicionais) ? produto.adicionais : [];
+      for (const antigo of antigos) {
+        const nome = String(antigo?.nome || '').trim().slice(0, 80);
+        const preco = Number(antigo?.preco);
+        if (nome.length < 2 || !Number.isFinite(preco) || preco < 0 || preco > 10000) continue;
+        let encontrados = await catalogo.findMany({
+          filters: { nome, preco: Math.round(preco * 100) / 100 },
+          pagination: { page: 1, pageSize: 1 },
+        });
+        let adicional = encontrados[0];
+        if (!adicional) {
+          adicional = await catalogo.create({
+            data: { nome, preco: Math.round(preco * 100) / 100, disponivel: antigo.disponivel !== false },
+          });
+        }
+        if (adicional?.documentId) ids.add(adicional.documentId);
+      }
+      await produtos.update({
+        documentId: produto.documentId,
+        data: { adicionaisCatalogo: { set: [...ids] }, adicionaisMigrados: true },
+      });
+      migrados++;
+    }
+    if (lote.length < 100) break;
+    pagina++;
+  }
+  if (migrados) strapi.log.info(`Migração do catálogo: ${migrados} produto(s) conferido(s); JSON legado preservado.`);
+}
 async function criarCardapioDemo(strapi) {
   const categorias = strapi.documents('api::categoria.categoria');
   if ((await categorias.count({})) > 0) return;
@@ -236,6 +285,8 @@ module.exports = {
 
 
 
+    try { await migrarAdicionaisLegados(strapi); }
+    catch (erro) { strapi.log.error(`Falha ao migrar adicionais legados; JSON original preservado: ${erro.message}`); }
     await garantirLanchonete(strapi)
 
     if (process.env.SEED_DEMO === 'true') {

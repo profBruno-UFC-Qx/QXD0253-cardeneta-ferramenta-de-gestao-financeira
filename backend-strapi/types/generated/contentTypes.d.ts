@@ -443,6 +443,25 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAdicionalAdicional extends Struct.CollectionTypeSchema {
+  collectionName: 'adicionais';
+  info: { displayName: 'Adicional'; pluralName: 'adicionais'; singularName: 'adicional' };
+  options: { draftAndPublish: false };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    disponivel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::adicional.adicional'> & Schema.Attribute.Private;
+    nome: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.SetMinMaxLength<{ minLength: 2; maxLength: 80 }>;
+    preco: Schema.Attribute.Decimal & Schema.Attribute.Required & Schema.Attribute.SetMinMax<{ min: 0; max: 10000 }, number>;
+    produtos: Schema.Attribute.Relation<'manyToMany', 'api::produto.produto'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
   collectionName: 'categorias';
   info: {
@@ -470,55 +489,6 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-  };
-}
-
-export interface ApiDespesaDespesa extends Struct.CollectionTypeSchema {
-  collectionName: 'despesas';
-  info: {
-    displayName: 'Despesa';
-    pluralName: 'despesas';
-    singularName: 'despesa';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    data: Schema.Attribute.Date & Schema.Attribute.Required;
-    descricao: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-        minLength: 2;
-      }>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::despesa.despesa'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    registradaPor: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    tipo: Schema.Attribute.Enumeration<['insumo', 'conta_fixa', 'outros']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'outros'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    valor: Schema.Attribute.Decimal &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMax<
-        {
-          min: 0.01;
-        },
-        number
-      >;
   };
 }
 
@@ -583,6 +553,7 @@ export interface ApiItemPedidoItemPedido extends Struct.CollectionTypeSchema {
       'api::item-pedido.item-pedido'
     > &
       Schema.Attribute.Private;
+    adicionais: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
     nomeProduto: Schema.Attribute.String;
     pedido: Schema.Attribute.Relation<'manyToOne', 'api::pedido.pedido'>;
     precoUnitario: Schema.Attribute.Decimal &
@@ -746,6 +717,9 @@ export interface ApiProdutoProduto extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::categoria.categoria'
     >;
+    adicionais: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    adicionaisCatalogo: Schema.Attribute.Relation<'manyToMany', 'api::adicional.adicional'>;
+    adicionaisMigrados: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1290,7 +1264,6 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::categoria.categoria': ApiCategoriaCategoria;
-      'api::despesa.despesa': ApiDespesaDespesa;
       'api::endereco.endereco': ApiEnderecoEndereco;
       'api::item-pedido.item-pedido': ApiItemPedidoItemPedido;
       'api::lanchonete.lanchonete': ApiLanchoneteLanchonete;

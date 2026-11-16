@@ -4,21 +4,38 @@ const { digitos, texto } = require('../../../utils/validacao');
 const STATUS = ['recebido', 'em_preparo', 'pronto', 'em_entrega', 'entregue', 'cancelado'];
 const PAGAMENTOS = ['dinheiro', 'pix', 'cartao'];
 const MODALIDADES = ['mesa', 'retirada', 'entrega'];
+const UID = 'api::pedido.pedido';
 
 const ehStaff = (user) => ['atendente', 'gerente'].includes(user?.role?.type);
-
 module.exports = factories.createCoreController('api::pedido.pedido', () => ({
   async find(ctx) {
     const user = ctx.state.user;
-    if (!ehStaff(user)) {
-      const filters = ctx.query.filters || {};
-      ctx.query = { ...ctx.query, filters: { ...filters, cliente: { id: user.id } } };
-    }
-    return super.find(ctx);
+    if (!user) return ctx.unauthorized();
+    if (ehStaff(user)) return super.find(ctx);
+
+    const page = Math.max(1, Number(ctx.query.pagination?.page) || 1);
+    const pageSize = Math.max(1, Math.min(100, Number(ctx.query.pagination?.pageSize) || 30));
+    const where = { cliente: { id: user.id } };
+    const query = strapi.db.query(UID);
+    const [pedidos, total] = await Promise.all([
+      query.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        populate: ['itens'],
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      }),
+      query.count({ where }),
+    ]);
+    const limpos = await this.sanitizeOutput(pedidos, ctx);
+    return this.transformResponse(limpos, {
+      pagination: { page, pageSize, pageCount: Math.ceil(total / pageSize), total },
+    });
   },
 
   async findOne(ctx) {
     const user = ctx.state.user;
+    if (!user) return ctx.unauthorized();
     const pedido = await strapi.documents('api::pedido.pedido').findOne({
       documentId: ctx.params.id,
       populate: ['cliente'],
@@ -57,10 +74,30 @@ module.exports = factories.createCoreController('api::pedido.pedido', () => ({
       if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 50) {
         return ctx.badRequest('Quantidade inválida');
       }
-      const produto = await strapi.documents('api::produto.produto').findOne({ documentId: String(item.produto) });
+      const produto = await strapi.documents('api::produto.produto').findOne({ documentId: String(item.produto), populate: ['adicionaisCatalogo'] });
       if (!produto || !produto.disponivel) return ctx.badRequest('Um dos produtos não está disponível');
-      subtotal += Number(produto.preco) * quantidade;
-      linhas.push({ produto, quantidade });
+      const selecoes = item.adicionais === undefined ? [] : item.adicionais;
+      if (!Array.isArray(selecoes) || selecoes.length > 30) {
+        return ctx.badRequest('Lista de adicionais inválida');
+      }
+      const disponiveis = Array.isArray(produto.adicionaisCatalogo) ? produto.adicionaisCatalogo : [];
+      const adicionais = [];
+      const idsVistos = new Set();
+      for (const selecao of selecoes) {
+        const id = String(typeof selecao === 'string' ? selecao : selecao?.id || '');
+        const quantidadeAdicional = typeof selecao === 'string' ? 1 : Number(selecao?.quantidade ?? 1);
+        if (!Number.isInteger(quantidadeAdicional) || quantidadeAdicional < 1 || quantidadeAdicional > 50) {
+          return ctx.badRequest('Quantidade de adicional inválida');
+        }
+        if (!id || idsVistos.has(id)) return ctx.badRequest('Um adicional foi selecionado mais de uma vez ou não possui ID');
+        idsVistos.add(id);
+        const adicional = disponiveis.find((opcao) => opcao.documentId === id && opcao.disponivel !== false);
+        if (!adicional) return ctx.badRequest('Um adicional selecionado não está disponível para este produto');
+        adicionais.push({ id: adicional.documentId, nome: adicional.nome, preco: Number(adicional.preco), quantidade: quantidadeAdicional });
+      }
+      const precoAdicionais = adicionais.reduce((soma, adicional) => soma + adicional.preco * adicional.quantidade, 0);
+      subtotal += (Number(produto.preco) + precoAdicionais) * quantidade;
+      linhas.push({ produto, quantidade, adicionais });
     }
 
     const taxa = dados.modalidade === 'entrega' ? Number(loja?.taxaEntrega || 0) : 0;
@@ -82,17 +119,18 @@ module.exports = factories.createCoreController('api::pedido.pedido', () => ({
         observacoes: texto(dados.observacoes, 400),
         total: Math.round((subtotal + taxa) * 100) / 100,
         nomeCliente: staff && dados.nomeCliente ? texto(dados.nomeCliente, 120) : user.nome || user.username,
-        cliente: user.documentId,
+        cliente: user.id,
       },
     });
 
     try {
-      for (const { produto, quantidade } of linhas) {
+      for (const { produto, quantidade, adicionais } of linhas) {
         await strapi.documents('api::item-pedido.item-pedido').create({
           data: {
             quantidade,
             precoUnitario: Number(produto.preco),
             nomeProduto: produto.nome,
+            adicionais,
             pedido: pedido.documentId,
             produto: produto.documentId,
           },

@@ -67,6 +67,19 @@ async function iniciarCheckout({ loja, aoSucesso }) {
     el('btn-finalizar').textContent = getUsuario() ? 'Finalizar pedido' : 'Entrar para finalizar';
   }
 
+  async function migrarCarrinhoLegado() {
+    const itensComAdicionais = getCarrinho().filter((item) => adicionaisItem(item).length);
+    const ids = [...new Set(itensComAdicionais.map((item) => item.documentId))];
+    for (const id of ids) {
+      const resposta = await api(`/produtos/${encodeURIComponent(id)}?populate=adicionaisCatalogo`, { auth: false });
+      const relacao = resposta.data?.adicionaisCatalogo;
+      const catalogo = Array.isArray(relacao) ? relacao : relacao?.data || [];
+      if (!atualizarAdicionaisCatalogoProduto(id, catalogo)) {
+        throw new Error('Um adicional do carrinho foi removido ou desativado. Revise o produto e tente novamente.');
+      }
+    }
+  }
+
   async function enviar(e) {
     e.preventDefault();
     if (!getUsuario()) {
@@ -84,6 +97,7 @@ async function iniciarCheckout({ loja, aoSucesso }) {
     const botao = el('btn-finalizar');
     botao.disabled = true;
     try {
+      await migrarCarrinhoLegado();
       await api('/pedidos', {
         method: 'POST',
         body: {
@@ -94,7 +108,11 @@ async function iniciarCheckout({ loja, aoSucesso }) {
             entregaEndereco: el('c-entrega-endereco').value.trim(),
             formaPagamento: form.querySelector('input[name="pagamento"]:checked').value,
             observacoes: el('c-observacoes').value.trim(),
-            itens: getCarrinho().map((i) => ({ produto: i.documentId, quantidade: i.quantidade })),
+            itens: getCarrinho().map((i) => ({
+              produto: i.documentId,
+              quantidade: i.quantidade,
+              adicionais: adicionaisItem(i).map((a) => ({ id: a.id, quantidade: Math.max(1, Number(a.quantidade) || 1) })),
+            })),
           },
         },
       });

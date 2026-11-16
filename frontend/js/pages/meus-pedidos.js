@@ -21,7 +21,7 @@ function cartaoPedido(p) {
     ${progresso(p)}
     ${detalheModalidade(p)}
     <ul class="mt-3 mb-0 vstack gap-2 small ps-3">${(p.itens || []).map((i) =>
-    `<li class="d-flex justify-content-between gap-3"><span>${i.quantidade}× ${esc(i.nomeProduto || 'Item removido')}</span><span class="text-secondary">${dinheiro(i.precoUnitario * i.quantidade)}</span></li>`).join('')}
+    `<li><div class="d-flex justify-content-between gap-3"><span>${i.quantidade}× ${esc(i.nomeProduto || 'Item removido')}</span><span class="text-secondary">${dinheiro((Number(i.precoUnitario) + (i.adicionais || []).reduce((s, a) => s + Number(a.preco) * Math.max(1, Number(a.quantidade) || 1), 0)) * i.quantidade)}</span></div>${Array.isArray(i.adicionais) && i.adicionais.length ? `<ul class="text-secondary small mb-0">${i.adicionais.map((a) => `<li>${Math.max(1, Number(a.quantidade) || 1)}× ${esc(a.nome)} · ${dinheiro(Number(a.preco) * Math.max(1, Number(a.quantidade) || 1))}</li>`).join('')}</ul>` : ''}</li>`).join('')}
       ${Number(p.taxaEntrega) > 0 ? `<li class="d-flex justify-content-between gap-3"><span class="text-secondary">Taxa de entrega</span><span class="text-secondary">${dinheiro(p.taxaEntrega)}</span></li>` : ''}
     </ul>
     ${p.observacoes ? `<p class="text-secondary mt-2 small mb-0">Obs.: ${esc(p.observacoes)}</p>` : ''}

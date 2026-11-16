@@ -42,9 +42,11 @@ function renderCategorias() {
 function cartaoProduto(p) {
   const imagem = urlImagem(p.imagem);
   const qtd = quantidadeNoCarrinho(p.documentId);
+  const possuiAdicionais = (Array.isArray(p.adicionaisCatalogo) ? p.adicionaisCatalogo : []).some((a) => a.disponivel !== false);
   let acao;
   if (!p.disponivel) acao = '<span class="small fw-semibold text-danger">Indisponível</span>';
   else if (ehStaff()) acao = '<span class="text-secondary small">Acesso da equipe</span>';
+  else if (possuiAdicionais) acao = `<a href="produto.html#${esc(p.documentId)}" class="btn btn-warning btn-add text-dark text-decoration-none">Personalizar</a>`;
   else if (qtd === 0) acao = `<button type="button" class="btn btn-warning btn-add d-flex align-items-center gap-1 text-dark" data-acao="mais" data-id="${esc(p.documentId)}"><span class="material-symbols-outlined fs-6">add</span>Adicionar</button>`;
   else acao = seletorQuantidade(p.documentId, qtd);
 

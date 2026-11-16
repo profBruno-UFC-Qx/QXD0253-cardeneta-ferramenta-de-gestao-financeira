@@ -82,7 +82,7 @@ module.exports = {
           bairro: texto(endereco.bairro),
           cidade: texto(endereco.cidade),
           referencia: texto(endereco.referencia),
-          usuario: usuario.documentId,
+          usuario: usuario.id,
         },
       });
     }

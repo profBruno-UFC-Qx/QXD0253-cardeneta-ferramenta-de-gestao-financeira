@@ -6,6 +6,7 @@ const MENU_PAINEL = [
   { href: 'balcao.html', icone: 'point_of_sale', rotulo: 'Balcão', papeis: ['atendente', 'gerente'] },
   { href: 'index.html', icone: 'storefront', rotulo: 'Cardápio', papeis: ['atendente', 'gerente'] },
   { href: 'produtos.html', icone: 'lunch_dining', rotulo: 'Produtos', papeis: ['atendente', 'gerente'] },
+  { href: 'adicionais.html', icone: 'tune', rotulo: 'Adicionais', papeis: ['gerente'] },
   { href: 'categorias.html', icone: 'category', rotulo: 'Categorias', papeis: ['gerente'] },
   { href: 'equipe.html', icone: 'groups', rotulo: 'Equipe', papeis: ['gerente'] },
 ];
