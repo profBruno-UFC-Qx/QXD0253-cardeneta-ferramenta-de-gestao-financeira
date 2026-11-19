@@ -2,9 +2,12 @@ let loja = null;
 let produtos = [];
 let categorias = [];
 let categoriaAtiva = '';
+let paginaCardapio = 1;
+const TAMANHO_PAGINA_CARDAPIO = 12;
+const el = (id) => document.getElementById(id);
 
 function renderLoja() {
-  const box = document.getElementById('loja-info');
+  const box = el('loja-info');
   if (!loja) {
     box.innerHTML = '<p class="small text-secondary mb-0">Não foi possível carregar os dados da lanchonete.</p>';
     return;
@@ -18,25 +21,26 @@ function renderLoja() {
   const info = (icone, texto) => (texto
     ? `<span class="d-inline-flex align-items-center gap-2"><span class="material-symbols-outlined fs-6">${icone}</span>${esc(texto)}</span>`
     : '');
-
   box.innerHTML = `<div class="d-flex align-items-center gap-3">
     ${logo}
     <div class="overflow-hidden flex-fill">
-      <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-        <h1 class="fs-5 fw-bold mb-0">${esc(loja.nome)}</h1>${status}
-      </div>
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-1"><h1 class="fs-5 fw-bold mb-0">${esc(loja.nome)}</h1>${status}</div>
       ${loja.descricao ? `<p class="text-secondary mb-2 small">${esc(loja.descricao)}</p>` : ''}
-      <div class="text-secondary d-flex flex-wrap column-gap-3 row-gap-1 small">
-        ${info('schedule', loja.horario)}${info('call', loja.telefone ? mascaraTelefone(loja.telefone) : '')}${info('location_on', loja.endereco)}
-      </div>
+      <div class="text-secondary d-flex flex-wrap column-gap-3 row-gap-1 small">${info('schedule', loja.horario)}${info('call', loja.telefone ? mascaraTelefone(loja.telefone) : '')}${info('location_on', loja.endereco)}</div>
     </div>
   </div>`;
 }
 
+function produtosFiltrados() {
+  const termo = el('busca-cardapio').value.trim().toLocaleLowerCase('pt-BR');
+  return produtos.filter((produto) => {
+    const texto = `${produto.nome} ${produto.descricao || ''}`.toLocaleLowerCase('pt-BR');
+    return (!categoriaAtiva || produto.categoria?.nome === categoriaAtiva) && (!termo || texto.includes(termo));
+  });
+}
+
 function renderCategorias() {
-  document.getElementById('categorias').innerHTML = categorias.length || categoriaAtiva !== ''
-    ? botoesCategoria(categorias, categoriaAtiva)
-    : '';
+  el('categorias').innerHTML = botoesCategoria(categorias, categoriaAtiva);
 }
 
 function cartaoProduto(p) {
@@ -44,38 +48,39 @@ function cartaoProduto(p) {
   const qtd = quantidadeNoCarrinho(p.documentId);
   const possuiAdicionais = (Array.isArray(p.adicionaisCatalogo) ? p.adicionaisCatalogo : []).some((a) => a.disponivel !== false);
   let acao;
-  if (!p.disponivel) acao = '<span class="small fw-semibold text-danger">Indisponível</span>';
-  else if (ehStaff()) acao = '<span class="text-secondary small">Acesso da equipe</span>';
-  else if (possuiAdicionais) acao = `<a href="produto.html#${esc(p.documentId)}" class="btn btn-warning btn-add text-dark text-decoration-none">Personalizar</a>`;
-  else if (qtd === 0) acao = `<button type="button" class="btn btn-warning btn-add d-flex align-items-center gap-1 text-dark" data-acao="mais" data-id="${esc(p.documentId)}"><span class="material-symbols-outlined fs-6">add</span>Adicionar</button>`;
+  if (!p.disponivel) acao = '<button class="btn btn-outline-secondary w-100" type="button" disabled>Indisponível</button>';
+  else if (ehStaff()) acao = '<span class="small text-secondary text-center">Pedidos disponíveis pelo Balcão</span>';
+  else if (possuiAdicionais) acao = `<a href="produto.html#${esc(p.documentId)}" class="btn btn-warning w-100 fw-semibold text-dark text-decoration-none"><span class="material-symbols-outlined align-middle fs-6">tune</span> Personalizar</a>`;
+  else if (qtd === 0) acao = `<button type="button" class="btn btn-warning w-100 fw-semibold" data-acao="mais" data-id="${esc(p.documentId)}"><span class="material-symbols-outlined align-middle fs-6">add_shopping_cart</span> Adicionar</button>`;
   else acao = seletorQuantidade(p.documentId, qtd);
-
-  return `<div class="card card-produto border-0 shadow-sm flex-row align-items-center p-3 h-100 ${p.disponivel ? '' : 'opacity-75'}">
-    <a href="produto.html#${esc(p.documentId)}" class="flex-shrink-0 rounded-3 overflow-hidden me-3" style="width:80px;height:80px" aria-label="Ver ${esc(p.nome)}">
-      ${imagem
-      ? `<img src="${esc(imagem)}" alt="${esc(p.nome)}" loading="lazy" class="img-produto">`
-      : semImagemHtml('img-produto')}
+  return `<article class="card cardapio-card h-100 overflow-hidden border-0 ${p.disponivel ? '' : 'opacity-75'}">
+    <a href="produto.html#${esc(p.documentId)}" class="ratio ratio-4x3 bg-warning-subtle overflow-hidden" aria-label="Ver ${esc(p.nome)}">
+      ${imagem ? `<img src="${esc(imagem)}" alt="${esc(p.nome)}" class="img-produto" loading="lazy">` : semImagemHtml('h-100 w-100')}
     </a>
-    <div class="d-flex flex-column flex-fill overflow-hidden">
-      <h2 class="fs-6 fw-bold mb-1 text-truncate"><a href="produto.html#${esc(p.documentId)}" class="text-dark text-decoration-none">${esc(p.nome)}</a></h2>
-      <p class="text-secondary small mb-2 line-clamp-2">${esc(p.descricao)}</p>
-      <div class="mt-auto d-flex align-items-center justify-content-between gap-2">
-        <strong class="fs-6">${dinheiro(p.preco)}</strong>${acao}
-      </div>
+    <div class="card-body d-flex flex-column gap-1 p-3">
+      <p class="small text-secondary mb-0">${esc(p.categoria?.nome || 'Produto')}</p>
+      <h2 class="fs-6 fw-bold mb-0 text-truncate"><a href="produto.html#${esc(p.documentId)}" class="text-dark text-decoration-none">${esc(p.nome)}</a></h2>
+      <p class="text-secondary small mb-2">${dinheiro(p.preco)}</p>
+      <div class="mt-auto">${acao}</div>
     </div>
-  </div>`;
+  </article>`;
 }
 
 function renderProdutos() {
-  const lista = produtos.filter((p) => (!categoriaAtiva || p.categoria?.nome === categoriaAtiva));
-  document.getElementById('lista').innerHTML = lista.length
-    ? lista.map((p) => `<div class="col">${cartaoProduto(p)}</div>`).join('')
-    : estadoVazio('search_off', 'Nenhum produto nesta categoria');
+  const filtrados = produtosFiltrados();
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / TAMANHO_PAGINA_CARDAPIO));
+  paginaCardapio = Math.min(paginaCardapio, totalPaginas);
+  const inicio = (paginaCardapio - 1) * TAMANHO_PAGINA_CARDAPIO;
+  const visiveis = filtrados.slice(inicio, inicio + TAMANHO_PAGINA_CARDAPIO);
+  el('lista').innerHTML = visiveis.length
+    ? visiveis.map((p) => `<div class="col">${cartaoProduto(p)}</div>`).join('')
+    : estadoVazio('search_off', 'Nenhum produto encontrado');
+  el('paginacao-cardapio').innerHTML = paginacaoHtml(filtrados.length, paginaCardapio, TAMANHO_PAGINA_CARDAPIO);
   renderBarra();
 }
 
 function renderBarra() {
-  const barra = document.getElementById('barra-carrinho');
+  const barra = el('barra-carrinho');
   const n = totalItens();
   barra.classList.toggle('d-none', n === 0);
   if (n === 0) return;
@@ -86,16 +91,17 @@ function renderBarra() {
 }
 
 async function iniciar() {
-  const lista = document.getElementById('lista');
+  const lista = el('lista');
   lista.innerHTML = estadoVazio('hourglass_top', 'Carregando cardápio...');
+  el('busca-cardapio').addEventListener('input', () => { paginaCardapio = 1; renderProdutos(); });
   try {
     const [cats, prods, dadosLoja] = await Promise.all([
-      api('/categorias?sort=nome', { auth: false }),
-      api('/produtos' + qs({ populate: '*', sort: 'nome', 'pagination[pageSize]': 100 }), { auth: false }),
+      apiTodos('/categorias', { sort: 'nome:asc' }),
+      apiTodos('/produtos', { populate: '*', sort: 'nome:asc' }),
       carregarLoja(),
     ]);
-    categorias = cats.data;
-    produtos = prods.data;
+    categorias = cats;
+    produtos = prods;
     loja = dadosLoja;
     renderLoja();
     renderCategorias();
@@ -103,15 +109,21 @@ async function iniciar() {
   } catch (erro) {
     lista.innerHTML = estadoVazio('cloud_off', 'Não foi possível carregar o cardápio', esc(erro.message));
   }
-
-  document.getElementById('categorias').addEventListener('click', (e) => {
+  el('categorias').addEventListener('click', (e) => {
     const botao = e.target.closest('[data-categoria]');
     if (!botao) return;
     categoriaAtiva = botao.dataset.categoria;
+    paginaCardapio = 1;
     renderCategorias();
     renderProdutos();
   });
-
+  el('paginacao-cardapio').addEventListener('click', (e) => {
+    const botao = e.target.closest('[data-pagina]');
+    if (!botao || botao.disabled) return;
+    paginaCardapio = Number(botao.dataset.pagina);
+    renderProdutos();
+    el('lista').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   lista.addEventListener('click', (e) => {
     const botao = e.target.closest('[data-acao]');
     if (!botao) return;
@@ -120,9 +132,7 @@ async function iniciar() {
       const produto = produtos.find((p) => p.documentId === id);
       if (quantidadeNoCarrinho(id) === 0) adicionarAoCarrinho(produto);
       else alterarQuantidade(id, 1);
-    } else {
-      alterarQuantidade(id, -1);
-    }
+    } else alterarQuantidade(id, -1);
     renderProdutos();
   });
 }

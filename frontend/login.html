@@ -16,14 +16,14 @@
 </head>
 
 <body class="min-vh-100 bg-light" data-area="auth" data-papeis="">
-  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-3 d-print-none z-3"></div>
 
   <main id="conteudo" class="container-fluid p-0 h-100 min-vh-100">
     <div class="row g-0 min-vh-100">
 
       <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-between p-5 position-relative auth-banner">
-        <div class="z-1">
-          <a href="index.html" class="d-inline-flex align-items-center gap-2 text-dark text-decoration-none">
+        <div class="position-relative z-1">
+          <a href="index.html" class="d-inline-flex align-items-center gap-2 text-white text-decoration-none">
             <span class="bg-warning rounded-3 p-1 d-flex align-items-center justify-content-center"
               style="width:40px;height:40px">
               <span class="material-symbols-outlined fs-5">storefront</span>
@@ -31,9 +31,10 @@
             <span class="fw-bold fs-4" data-marca-nome>Caderneta</span>
           </a>
         </div>
-        <!-- <div class="z-1 text-dark pb-5">
-          <h2 class="display-5 fw-bold mb-3">A melhor comida,<br>na sua porta.</h2>
-          <p class="fs-5 text-secondary">Entre para acompanhar seus pedidos,<br>favoritar pratos e finalizar compras num piscar de olhos.</p>
+<!--         <div class="auth-banner-copy position-relative z-1">
+          <span class="small text-uppercase fw-semibold">Caderneta</span>
+          <h2 class="display-5 fw-bold mt-2 mb-3">A melhor comida,<br>na sua porta.</h2>
+          <p class="fs-5 mb-0">Acesse sua conta e acompanhe seus pedidos.</p>
         </div> -->
       </div>
 
@@ -74,8 +75,9 @@
               <div class="position-relative">
                 <span
                   class="material-symbols-outlined pe-none position-absolute start-0 ms-3 top-50 translate-middle-y fs-5 text-secondary">lock</span>
-                <input id="senha" type="password" class="form-control form-control-lg ps-5 bg-light border-0" required
+                <input id="senha" type="password" class="form-control form-control-lg ps-5 pe-5 bg-light border-0" required
                   autocomplete="current-password" placeholder="Sua senha">
+                <button type="button" class="btn btn-link text-secondary position-absolute end-0 top-50 translate-middle-y me-1 p-2" data-toggle-password="senha" aria-label="Mostrar senha" aria-pressed="false"><span class="material-symbols-outlined">visibility</span></button>
               </div>
             </div>
 

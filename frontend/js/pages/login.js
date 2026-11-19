@@ -30,6 +30,7 @@ async function entrar(e) {
 }
 
 function iniciar() {
+  ligarAlternarSenha();
   if (papel()) {
     window.location.href = paginaInicial();
     return;

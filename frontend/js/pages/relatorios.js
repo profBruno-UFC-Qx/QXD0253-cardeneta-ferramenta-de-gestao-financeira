@@ -21,7 +21,8 @@ function render(d) {
   relatorioAtual = d;
   const r = d.resumo;
   $r('periodo-label').textContent = `Período: ${new Date(`${d.periodo.de}T12:00:00`).toLocaleDateString('pt-BR')} até ${new Date(`${d.periodo.ate}T12:00:00`).toLocaleDateString('pt-BR')}`;
-  $r('kpis').innerHTML = `<div class="col-6 col-xl-3"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Faturamento</p><strong class="fs-5">${dinheiro(r.faturamento)}</strong></article></div><div class="col-6 col-xl-3"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Despesas</p><strong class="fs-5 text-danger">${dinheiro(r.despesas)}</strong></article></div><div class="col-6 col-xl-3"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Lucro estimado</p><strong class="fs-5 ${r.lucroEstimado < 0 ? 'text-danger' : 'text-success'}">${dinheiro(r.lucroEstimado)}</strong></article></div><div class="col-6 col-xl-3"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Pedidos · Ticket médio</p><strong class="fs-5">${r.pedidos} <span class="text-secondary fs-6">· ${dinheiro(r.ticketMedio)}</span></strong></article></div>`;
+  $r('kpis').innerHTML = cartoesFinanceiros(r, 'col-6 col-xl-3', 'fs-5')
+    + `<div class="col-6 col-xl-3"><article class="card app-kpi-card border-0 p-3 h-100"><p class="small text-secondary mb-2">Pedidos · Ticket médio</p><strong class="fs-5">${r.pedidos} <span class="text-secondary fs-6">· ${dinheiro(r.ticketMedio)}</span></strong></article></div>`;
   $r('grafico-dia').innerHTML = graficoDias(d.vendasPorDia);
   $r('grafico-pagamento').innerHTML = barraLista(d.porPagamento);
   $r('grafico-modalidade').innerHTML = barraLista(d.porModalidade);

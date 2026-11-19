@@ -1,12 +1,74 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Financeiro - Caderneta</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"><link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="css/style.css"></head>
-<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente"><div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite"></div>
-<main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
-  <header class="d-flex flex-wrap align-items-end justify-content-between gap-3"><div><h1 class="fs-3 fw-bold mb-1">Financeiro</h1><p class="text-secondary small mb-0">Despesas e resultado estimado por período</p></div><button id="btn-nova" class="btn btn-warning fw-semibold"><span class="material-symbols-outlined align-middle fs-5">add</span> Nova despesa</button></header>
-  <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-wrap align-items-end gap-3 d-print-none"><div><label class="form-label small" for="f-de">De</label><input id="f-de" class="form-control" type="date"></div><div><label class="form-label small" for="f-ate">Até</label><input id="f-ate" class="form-control" type="date"></div><button class="btn btn-dark" type="submit">Filtrar</button><button class="btn btn-outline-secondary" type="button" id="limpar">Limpar</button></form>
-  <section id="resumo-financeiro" class="row g-3"></section>
-  <section class="card border-0 shadow-sm"><div class="p-3 border-bottom d-flex justify-content-between align-items-center"><h2 class="fs-6 fw-bold mb-0">Despesas registradas</h2><span id="total-itens" class="badge text-bg-light"></span></div><div id="lista-despesas" class="table-responsive"></div></section>
-  <dialog id="dlg-despesa" class="w-100 border-0 rounded-3 p-0 shadow" style="max-width:520px"><form id="form-despesa" class="vstack gap-3 p-3 p-md-4"><div class="d-flex justify-content-between align-items-center border-bottom pb-3"><h2 id="dlg-titulo" class="fs-5 fw-bold mb-0">Nova despesa</h2><button type="button" data-fechar class="btn btn-light p-2" aria-label="Fechar"><span class="material-symbols-outlined">close</span></button></div><input id="despesa-id" type="hidden"><div><label class="form-label" for="descricao">Descrição</label><input id="descricao" class="form-control" maxlength="160" required></div><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="valor">Valor (R$)</label><input id="valor" class="form-control" type="number" min="0.01" step="0.01" required></div><div class="col-sm-6"><label class="form-label" for="data">Data</label><input id="data" class="form-control" type="date" required></div></div><div><label class="form-label" for="tipo">Tipo</label><select id="tipo" class="form-select" required><option value="insumo">Insumo</option><option value="conta_fixa">Conta fixa</option><option value="outros">Outros</option></select></div><div class="d-flex justify-content-end gap-2 border-top pt-3"><button type="button" data-fechar class="btn btn-outline-secondary">Cancelar</button><button type="submit" class="btn btn-warning fw-semibold">Salvar despesa</button></div></form></dialog>
-</main><script src="js/config.js"></script><script src="js/api.js"></script><script src="js/layout.js"></script><script src="js/pages/financeiro.js"></script></body></html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Financeiro - Caderneta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
+  </div>
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
+    <header class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1 class="fs-3 fw-bold mb-1">Financeiro</h1>
+        <p class="text-secondary small mb-0">Despesas e resultado estimado por período</p>
+      </div><button id="btn-nova" class="btn btn-warning fw-semibold"><span
+          class="material-symbols-outlined align-middle fs-5">add</span> Nova despesa</button>
+    </header>
+    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-wrap align-items-end gap-3 d-print-none">
+      <div><label class="form-label small" for="f-de">De</label><input id="f-de" class="form-control" type="date"></div>
+      <div><label class="form-label small" for="f-ate">Até</label><input id="f-ate" class="form-control" type="date">
+      </div><button class="btn btn-dark" type="submit">Filtrar</button><button class="btn btn-outline-secondary"
+        type="button" id="limpar">Limpar</button>
+    </form>
+    <section id="resumo-financeiro" class="row g-3"></section>
+    <section class="card border-0 shadow-sm">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="fs-6 fw-bold mb-0">Despesas registradas</h2><span id="total-itens"
+          class="badge text-bg-light"></span>
+      </div>
+      <div id="lista-despesas" class="table-responsive"></div>
+    </section>
+    <dialog id="dlg-despesa" class="w-100 border-0 rounded-3 p-0 shadow" style="max-width:520px">
+      <form id="form-despesa" class="vstack gap-3 p-3 p-md-4">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+          <h2 id="dlg-titulo" class="fs-5 fw-bold mb-0">Nova despesa</h2><button type="button" data-fechar
+            class="btn btn-light p-2" aria-label="Fechar"><span class="material-symbols-outlined">close</span></button>
+        </div><input id="despesa-id" type="hidden">
+        <div><label class="form-label" for="descricao">Descrição</label><input id="descricao" class="form-control"
+            maxlength="160" required></div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="valor">Valor (R$)</label><input id="valor"
+              class="form-control" type="number" min="0.01" step="0.01" required></div>
+          <div class="col-sm-6"><label class="form-label" for="data">Data</label><input id="data" class="form-control"
+              type="date" required></div>
+        </div>
+        <div><label class="form-label" for="tipo">Tipo</label><select id="tipo" class="form-select" required>
+            <option value="insumo">Insumo</option>
+            <option value="conta_fixa">Conta fixa</option>
+            <option value="outros">Outros</option>
+          </select></div>
+        <div class="d-flex justify-content-end gap-2 border-top pt-3"><button type="button" data-fechar
+            class="btn btn-outline-secondary">Cancelar</button><button type="submit"
+            class="btn btn-warning fw-semibold">Salvar despesa</button></div>
+      </form>
+    </dialog>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/financeiro.js"></script>
+</body>
+
+</html>

@@ -85,18 +85,13 @@ function qs(params) {
 async function api(caminho, { method = 'GET', body, auth = true } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
-  const token = getToken();
-  if (auth && token) headers.Authorization = 'Bearer ' + token;
-
-  const res = await fetch(API_URL + caminho, {
+  const res = await fetchComRefresh(API_URL + caminho, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
-  });
-
+  }, auth);
   if (res.status === 204) return null;
   const json = await res.json().catch(() => null);
-
   if (!res.ok) {
     if (res.status === 401 && auth && token) {
       limparSessao();
@@ -108,6 +103,39 @@ async function api(caminho, { method = 'GET', body, auth = true } = {}) {
     throw new Error(TRADUCOES[mensagem] || mensagem);
   }
   return json;
+}
+
+async function fetchComRefresh(url, opcoes, auth = true) {
+  const token = getToken();
+  const request = { ...opcoes, credentials: 'include', headers: { ...(opcoes.headers || {}) } };
+  if (auth && token) request.headers.Authorization = 'Bearer ' + token;
+  let res = await fetch(url, request);
+  if (res.status === 401 && auth && token && !url.endsWith('/auth/refresh')) {
+    try {
+      const jwt = await renovarSessao();
+      request.headers.Authorization = 'Bearer ' + jwt;
+      res = await fetch(url, request);
+    } catch { /* api() tratará a resposta 401 e encerrará a sessão. */ }
+  }
+  return res;
+}
+
+let renovacaoEmAndamento;
+function renovarSessao() {
+  if (!renovacaoEmAndamento) {
+    renovacaoEmAndamento = fetch(API_URL + '/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    }).then(async (res) => {
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.jwt) throw new Error('A sessão expirou');
+      localStorage.setItem('token', json.jwt);
+      return json.jwt;
+    }).finally(() => { renovacaoEmAndamento = null; });
+  }
+  return renovacaoEmAndamento;
 }
 
 async function apiTodos(caminho, params = {}) {
@@ -123,12 +151,20 @@ async function apiTodos(caminho, params = {}) {
   return itens;
 }
 
+async function carregarCatalogoBase() {
+  const [categorias, produtos] = await Promise.all([
+    apiTodos('/categorias', { sort: 'nome:asc' }),
+    apiTodos('/produtos', { populate: '*', sort: 'nome:asc' }),
+  ]);
+  return { categorias, produtos };
+}
+
 async function enviarImagem(arquivo) {
   const form = new FormData();
   form.append('files', arquivo);
-  const res = await fetch(API_URL + '/upload', {
+  const res = await fetchComRefresh(API_URL + '/upload', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + getToken() },
+    headers: {},
     body: form,
   });
   const json = await res.json().catch(() => null);
@@ -371,4 +407,18 @@ function cpfValido(valor) {
 function telefoneValido(valor) {
   const tamanho = digitos(valor).length;
   return tamanho === 10 || tamanho === 11;
+}
+
+function ligarAlternarSenha() {
+  document.querySelectorAll('[data-toggle-password]').forEach((botao) => {
+    botao.addEventListener('click', () => {
+      const campo = document.getElementById(botao.dataset.togglePassword);
+      if (!campo) return;
+      const mostrar = campo.type === 'password';
+      campo.type = mostrar ? 'text' : 'password';
+      botao.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+      botao.setAttribute('aria-pressed', String(mostrar));
+      botao.querySelector('.material-symbols-outlined').textContent = mostrar ? 'visibility_off' : 'visibility';
+    });
+  });
 }

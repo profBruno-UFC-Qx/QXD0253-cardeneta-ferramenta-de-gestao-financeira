@@ -64,16 +64,16 @@ function montarPainel(conteudo) {
   const usuario = getUsuario();
   const atual = paginaAtual();
   const itens = MENU_PAINEL.filter((i) => i.papeis.includes(papel()));
+  conteudo.classList.add('app-page-content');
 
   const linkLateral = (i) => {
     const ativo = i.href === atual;
     const classe = ativo ? 'bg-warning-subtle text-warning-emphasis fw-bold' : 'text-secondary';
-    return `<a href="${i.href}" class="d-flex align-items-center gap-3 rounded-3 px-3 py-2 small text-decoration-none ${classe}"><span class="material-symbols-outlined">${i.icone}</span>${i.rotulo}</a>`;
+    return `<a href="${i.href}" class="app-nav-link d-flex align-items-center gap-3 rounded-3 px-3 py-2 small text-decoration-none ${ativo ? 'is-active' : classe}"><span class="material-symbols-outlined">${i.icone}</span>${i.rotulo}</a>`;
   };
 
   const lateral = document.createElement('aside');
-  lateral.className = 'position-sticky top-0 d-none min-vh-100 d-print-none flex-shrink-0 flex-column border-end border-secondary-subtle bg-white d-md-flex';
-  lateral.style.width = '240px';
+  lateral.className = 'app-sidebar position-sticky top-0 d-none d-print-none flex-shrink-0 flex-column border-end border-secondary-subtle d-md-flex';
 
   lateral.innerHTML = `<a href="${paginaInicial()}" class="d-flex align-items-center gap-3 p-3 text-decoration-none border-bottom border-secondary-subtle mb-2">${marcaHtml()}</a>
     <nav class="flex-fill vstack gap-1 overflow-y-auto px-3 py-2">${itens.map(linkLateral).join('')}</nav>
@@ -90,7 +90,7 @@ function montarPainel(conteudo) {
     </div>`;
 
   const topo = document.createElement('header');
-  topo.className = 'position-sticky top-0 d-flex py-2 align-items-center justify-content-between border-bottom border-secondary-subtle bg-white px-3 d-md-none d-print-none';
+  topo.className = 'app-mobile-header position-sticky top-0 d-flex py-2 align-items-center justify-content-between border-bottom border-secondary-subtle px-3 d-md-none d-print-none';
   topo.innerHTML = `<a href="${paginaInicial()}" class="d-flex overflow-hidden align-items-center gap-3 text-decoration-none">${marcaHtml()}</a><div class="d-flex align-items-center">${botaoSair()}</div>`;
 
   const principais = itens.length > 5 ? itens.slice(0, 4) : itens;
@@ -98,11 +98,11 @@ function montarPainel(conteudo) {
 
   const linkInferior = (i) => {
     const ativo = i.href === atual;
-    return `<a href="${i.href}" class="d-flex h-100 flex-fill flex-column align-items-center justify-content-center gap-1 text-decoration-none ${ativo ? 'text-warning-emphasis ' : 'text-secondary '}"><span class="material-symbols-outlined ">${i.icone}</span><span class="small fw-medium">${i.rotulo}</span></a>`;
+    return `<a href="${i.href}" class="app-mobile-nav-link d-flex h-100 flex-fill flex-column align-items-center justify-content-center gap-1 text-decoration-none ${ativo ? 'text-warning-emphasis fw-semibold' : 'text-secondary'}"><span class="material-symbols-outlined">${i.icone}</span><span class="small fw-medium">${i.rotulo}</span></a>`;
   };
 
   const inferior = document.createElement('nav');
-  inferior.className = 'position-fixed start-0 end-0 bottom-0 d-flex py-2 d-print-none align-items-center justify-content-around border-top border-secondary-subtle bg-white px-3 d-md-none';
+  inferior.className = 'app-mobile-nav position-fixed start-0 end-0 bottom-0 d-flex py-2 d-print-none align-items-center justify-content-around border-top border-secondary-subtle px-3 d-md-none';
   inferior.innerHTML = principais.map(linkInferior).join('') + (extras.length
     ? `<button type="button" data-abrir="menu-mais" class="d-flex h-100 flex-fill flex-column align-items-center justify-content-center gap-1 text-secondary border-0 bg-transparent"><span class="material-symbols-outlined">menu</span><span class="small fw-medium">Mais</span></button>`
     : '');

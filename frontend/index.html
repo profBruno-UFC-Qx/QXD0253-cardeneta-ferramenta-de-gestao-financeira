@@ -16,16 +16,22 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="">
-  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-3 d-print-none z-3"></div>
   <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
     <section id="loja-info" class="card mb-3 p-3 p-md-3 border-0 shadow-sm"></section>
+    <div class="input-group mb-3">
+      <span class="input-group-text bg-white"><span class="material-symbols-outlined fs-5">search</span></span>
+      <input id="busca-cardapio" type="search" class="form-control" placeholder="Buscar produto" autocomplete="off" aria-label="Buscar produtos no cardápio">
+    </div>
     <div id="categorias" class="mb-3 d-flex gap-2 overflow-x-auto px-0 pb-2" style="scrollbar-width:none"></div>
-    <div id="lista" class="row row-cols-1 g-4 pb-5 mb-2 row-cols-md-2 row-cols-lg-3"></div>
+    <div id="lista" class="row row-cols-2 g-3 pb-3 mb-2 row-cols-md-3 row-cols-xl-4" aria-live="polite"></div>
+    <div id="paginacao-cardapio"></div>
     <div id="barra-carrinho"
       class="position-fixed start-50 bottom-0 mb-3 translate-middle-x d-none container-sm d-print-none z-3"></div>
   </main>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/pages/index.js"></script>

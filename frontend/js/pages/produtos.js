@@ -1,5 +1,7 @@
 let produtos = [];
 let categorias = [];
+let paginaProdutos = 1;
+const TAMANHO_PAGINA_PRODUTOS = 12;
 let arquivoPrincipal = null;
 let urlPrevista = null;
 let arquivosGaleria = [];
@@ -52,22 +54,26 @@ function cartaoProduto(p) {
 }
 
 function renderProdutos() {
-  const lista = produtosFiltrados();
+  const filtrados = produtosFiltrados();
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / TAMANHO_PAGINA_PRODUTOS));
+  paginaProdutos = Math.min(paginaProdutos, totalPaginas);
+  const inicio = (paginaProdutos - 1) * TAMANHO_PAGINA_PRODUTOS;
+  const lista = filtrados.slice(inicio, inicio + TAMANHO_PAGINA_PRODUTOS);
   porId('grade').innerHTML = lista.length
     ? lista.map(cartaoProduto).join('')
     : estadoVazio('lunch_dining', 'Nenhum produto encontrado');
+  porId('paginacao-produtos').innerHTML = paginacaoHtml(filtrados.length, paginaProdutos, TAMANHO_PAGINA_PRODUTOS);
   const indisponiveis = produtos.filter((p) => !p.disponivel).length;
   porId('resumo').textContent = `${produtos.length} produtos · ${indisponiveis} indisponíveis`;
 }
 
 async function carregar() {
-  const [cats, prods, adicionais] = await Promise.all([
-    apiTodos('/categorias', { sort: 'nome:asc' }),
-    apiTodos('/produtos', { populate: '*', sort: 'nome:asc' }),
+  const [catalogo, adicionais] = await Promise.all([
+    carregarCatalogoBase(),
     gerente ? apiTodos('/adicionais', { sort: 'nome:asc' }) : Promise.resolve([]),
   ]);
-  categorias = cats;
-  produtos = prods;
+  categorias = catalogo.categorias;
+  produtos = catalogo.produtos;
   catalogoAdicionais = adicionais;
   const opcoes = categorias.map((c) => `<option value="${esc(c.documentId)}">${esc(c.nome)}</option>`).join('');
   porId('p-categoria').innerHTML = '<option value="">Sem categoria</option>' + opcoes;
@@ -161,9 +167,9 @@ async function enviarMidias(produtoId, campo, arquivos) {
   form.append('ref', 'api::produto.produto');
   form.append('refId', String(produtoId));
   form.append('field', campo);
-  const resposta = await fetch(API_URL + '/upload', {
+  const resposta = await fetchComRefresh(API_URL + '/upload', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+    headers: {},
     body: form,
   });
   const json = await resposta.json().catch(() => null);
@@ -289,8 +295,15 @@ async function iniciar() {
   });
   porId('grade').addEventListener('click', acaoProduto);
   porId('grade').addEventListener('change', alternarDisponibilidade);
-  porId('busca').addEventListener('input', renderProdutos);
-  porId('filtro-categoria').addEventListener('change', renderProdutos);
+  porId('busca').addEventListener('input', () => { paginaProdutos = 1; renderProdutos(); });
+  porId('filtro-categoria').addEventListener('change', () => { paginaProdutos = 1; renderProdutos(); });
+  porId('paginacao-produtos').addEventListener('click', (evento) => {
+    const botao = evento.target.closest('[data-pagina]');
+    if (!botao || botao.disabled) return;
+    paginaProdutos = Number(botao.dataset.pagina);
+    renderProdutos();
+    porId('grade').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   porId('p-arquivo').addEventListener('change', async (evento) => {
     const arquivo = evento.target.files[0];
     if (!arquivo) return;

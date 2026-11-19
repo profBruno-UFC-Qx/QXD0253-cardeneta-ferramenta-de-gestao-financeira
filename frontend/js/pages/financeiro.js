@@ -4,8 +4,7 @@ const $ = (id) => document.getElementById(id);
 const dataHoje = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 function datasFiltro() { return { de: $('f-de').value, ate: $('f-ate').value }; }
 function renderResumo(dados) {
-  const r = dados.resumo;
-  $('resumo-financeiro').innerHTML = `<div class="col-12 col-sm-4"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Faturamento</p><strong class="fs-4">${dinheiro(r.faturamento)}</strong></article></div><div class="col-12 col-sm-4"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Despesas</p><strong class="fs-4 text-danger">${dinheiro(r.despesas)}</strong></article></div><div class="col-12 col-sm-4"><article class="card border-0 shadow-sm p-3"><p class="small text-secondary mb-2">Lucro estimado</p><strong class="fs-4 ${r.lucroEstimado < 0 ? 'text-danger' : 'text-success'}">${dinheiro(r.lucroEstimado)}</strong></article></div>`;
+  $('resumo-financeiro').innerHTML = cartoesFinanceiros(dados.resumo);
 }
 function renderDespesas() {
   $('total-itens').textContent = `${despesas.length} ${despesas.length === 1 ? 'registro' : 'registros'}`;

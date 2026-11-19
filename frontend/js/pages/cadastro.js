@@ -29,6 +29,7 @@ async function cadastrar(e) {
 }
 
 function iniciar() {
+  ligarAlternarSenha();
   if (papel()) {
     window.location.href = paginaInicial();
     return;

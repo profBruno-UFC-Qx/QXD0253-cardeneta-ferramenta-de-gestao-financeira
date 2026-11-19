@@ -2,6 +2,8 @@ let produtosBalcao = [];
 let categoriasBalcao = [];
 let categoriaBalcaoAtiva = '';
 let lojaBalcao = null;
+let paginaBalcao = 1;
+const TAMANHO_PAGINA_BALCAO = 12;
 const itensBalcao = new Map();
 let enviandoBalcao = false;
 
@@ -17,10 +19,14 @@ function renderCategoriasBalcao() {
 
 function renderProdutosBalcao() {
   const termo = elBalcao('busca').value.trim().toLocaleLowerCase('pt-BR');
-  const lista = produtosBalcao.filter((p) => {
+  const filtrados = produtosBalcao.filter((p) => {
     const texto = `${p.nome} ${p.descricao || ''}`.toLocaleLowerCase('pt-BR');
     return p.disponivel && (!categoriaBalcaoAtiva || p.categoria?.nome === categoriaBalcaoAtiva) && texto.includes(termo);
   });
+  const paginas = Math.max(1, Math.ceil(filtrados.length / TAMANHO_PAGINA_BALCAO));
+  paginaBalcao = Math.min(paginaBalcao, paginas);
+  const inicio = (paginaBalcao - 1) * TAMANHO_PAGINA_BALCAO;
+  const lista = filtrados.slice(inicio, inicio + TAMANHO_PAGINA_BALCAO);
 
   elBalcao('lista').innerHTML = lista.length
     ? lista.map((p) => {
@@ -46,6 +52,7 @@ function renderProdutosBalcao() {
       </div>`;
     }).join('')
     : estadoVazio('search_off', 'Nenhum produto disponível');
+  elBalcao('paginacao-balcao').innerHTML = paginacaoHtml(filtrados.length, paginaBalcao, TAMANHO_PAGINA_BALCAO);
 }
 
 function totalBalcao() {
@@ -191,13 +198,21 @@ async function enviarPedidoBalcao(evento) {
 }
 
 async function iniciarBalcao() {
-  elBalcao('busca').addEventListener('input', renderProdutosBalcao);
+  elBalcao('busca').addEventListener('input', () => { paginaBalcao = 1; renderProdutosBalcao(); });
   elBalcao('categorias').addEventListener('click', (evento) => {
     const botao = evento.target.closest('[data-categoria]');
     if (!botao) return;
     categoriaBalcaoAtiva = botao.dataset.categoria;
+    paginaBalcao = 1;
     renderCategoriasBalcao();
     renderProdutosBalcao();
+  });
+  elBalcao('paginacao-balcao').addEventListener('click', (evento) => {
+    const botao = evento.target.closest('[data-pagina]');
+    if (!botao || botao.disabled) return;
+    paginaBalcao = Number(botao.dataset.pagina);
+    renderProdutosBalcao();
+    elBalcao('lista').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   elBalcao('lista').addEventListener('input', (evento) => {
     if (evento.target.matches('[data-balcao-adicional]')) {
@@ -227,13 +242,12 @@ async function iniciarBalcao() {
   elBalcao('form-balcao').addEventListener('submit', enviarPedidoBalcao);
 
   try {
-    const [categorias, produtos, loja] = await Promise.all([
-      apiTodos('/categorias', { sort: 'nome:asc' }),
-      apiTodos('/produtos', { populate: '*', sort: 'nome:asc' }),
+    const [catalogo, loja] = await Promise.all([
+      carregarCatalogoBase(),
       carregarLoja(),
     ]);
-    categoriasBalcao = categorias;
-    produtosBalcao = produtos;
+    categoriasBalcao = catalogo.categorias;
+    produtosBalcao = catalogo.produtos;
     lojaBalcao = loja;
     renderCategoriasBalcao();
     atualizarBalcao();
