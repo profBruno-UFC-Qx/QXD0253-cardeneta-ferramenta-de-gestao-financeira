@@ -30,7 +30,6 @@ header.app-header {
 
 #conteudo { min-width: 0; }
 body[data-area="painel"] #conteudo { background-color: var(--app-canvas) !important; }
-#lista { row-gap: 1.5rem !important; }
 
 .card {
   border-color: var(--app-border);
@@ -236,4 +235,8 @@ dialog[open] { animation: dialog-in .16s ease-out; }
   .cardapio-card .card-body { padding: .75rem !important; min-height: 136px; }
   .cardapio-card h2 { font-size: .9rem !important; }
   .cardapio-card .btn { padding-inline: .35rem; font-size: .8rem; }
+}
+
+.cardapio-com-carrinho #conteudo {
+  padding-bottom: 6.5rem !important;
 }

@@ -83,6 +83,7 @@ function renderBarra() {
   const barra = el('barra-carrinho');
   const n = totalItens();
   barra.classList.toggle('d-none', n === 0);
+  document.body.classList.toggle('cardapio-com-carrinho', n > 0);
   if (n === 0) return;
   barra.innerHTML = `<a href="carrinho.html" class="d-flex align-items-center justify-content-between rounded-3 bg-warning px-3 py-2 fw-bold text-dark text-decoration-none shadow">
     <span class="d-flex align-items-center gap-2"><span class="material-symbols-outlined">shopping_bag</span>${n} ${n === 1 ? 'item' : 'itens'}</span>

@@ -22,6 +22,37 @@ function getUsuario() {
 function salvarSessao(jwt, usuario) {
   localStorage.setItem('token', jwt);
   localStorage.setItem('usuario', JSON.stringify(usuario));
+  mesclarCarrinhoVisitante(usuario?.id);
+}
+
+function mesclarCarrinhoVisitante(idUsuario) {
+  if (!idUsuario) return;
+  const chaveVisitante = 'carrinho_visitante';
+  const chaveUsuario = `carrinho_usuario_${idUsuario}`;
+  let visitante;
+  let usuario;
+  try {
+    visitante = JSON.parse(localStorage.getItem(chaveVisitante) || '[]');
+    usuario = JSON.parse(localStorage.getItem(chaveUsuario) || '[]');
+  } catch {
+    return;
+  }
+  if (!Array.isArray(visitante) || !visitante.length) return;
+  if (!Array.isArray(usuario)) usuario = [];
+  const chaveItem = (item) => {
+    const adicionais = (Array.isArray(item.adicionais) ? item.adicionais : [])
+      .map((a) => `${a.id || a.documentId}:${Math.max(1, Number(a.quantidade) || 1)}`)
+      .sort()
+      .join(',');
+    return `${item.documentId}|${adicionais}`;
+  };
+  for (const item of visitante) {
+    const existente = usuario.find((atual) => chaveItem(atual) === chaveItem(item));
+    if (existente) existente.quantidade = Math.min(50, (Number(existente.quantidade) || 0) + (Number(item.quantidade) || 0));
+    else usuario.push(item);
+  }
+  localStorage.setItem(chaveUsuario, JSON.stringify(usuario));
+  localStorage.removeItem(chaveVisitante);
 }
 
 function limparSessao() {
@@ -30,6 +61,13 @@ function limparSessao() {
 }
 
 function sair() {
+  const usuario = getUsuario();
+  const carrinhoAntigo = localStorage.getItem('carrinho');
+  if (usuario?.id && carrinhoAntigo !== null) {
+    const chaveUsuario = `carrinho_usuario_${usuario.id}`;
+    if (localStorage.getItem(chaveUsuario) === null) localStorage.setItem(chaveUsuario, carrinhoAntigo);
+    localStorage.removeItem('carrinho');
+  }
   limparSessao();
   window.location.href = 'index.html';
 }

@@ -17,6 +17,7 @@ function htmlCheckout() {
       <div class="row row-cols-2 g-3">${modalidade('retirada', 'Retirada', 'storefront')}${modalidade('entrega', 'Entrega', 'delivery_dining')}</div>
     </div>
     <div id="bloco-entrega" class="d-none vstack gap-3">
+      <div id="bloco-endereco-salvo" class="d-none"><label class="form-label" for="c-endereco-salvo">Usar endereço cadastrado</label><select id="c-endereco-salvo" class="form-select"><option value="">Escolher um endereço…</option></select></div>
       <div><label class="form-label" for="c-entrega-nome">Quem vai receber</label><input id="c-entrega-nome" class="form-control" required></div>
       <div><label class="form-label" for="c-entrega-telefone">Telefone de quem recebe</label><input id="c-entrega-telefone" class="form-control" inputmode="tel" data-mascara="telefone" placeholder="(88) 99999-9999" required></div>
       <div><label class="form-label" for="c-entrega-endereco">Endereço de entrega</label><textarea id="c-entrega-endereco" class="form-control" rows="2" placeholder="Rua, número, bairro e referência" required></textarea></div>
@@ -65,6 +66,41 @@ async function iniciarCheckout({ loja, aoSucesso }) {
     aviso.classList.toggle('d-none', !fechada);
     el('btn-finalizar').disabled = fechada || itens.length === 0;
     el('btn-finalizar').textContent = getUsuario() ? 'Finalizar pedido' : 'Entrar para finalizar';
+  }
+
+  function textoEndereco(endereco) {
+    return [
+      `${endereco.rua || ''}${endereco.numero ? `, ${endereco.numero}` : ''}`,
+      endereco.complemento,
+      endereco.bairro,
+      endereco.cidade,
+      endereco.cep ? `CEP ${endereco.cep}` : '',
+      endereco.referencia ? `Referência: ${endereco.referencia}` : '',
+    ].filter(Boolean).join(' · ');
+  }
+
+  async function carregarEnderecosSalvos() {
+    if (papel() !== 'authenticated') return;
+    try {
+      const resposta = await api('/enderecos?sort=createdAt:desc');
+      const enderecos = resposta.data || [];
+      if (!enderecos.length) return;
+      const seletor = el('c-endereco-salvo');
+      seletor.innerHTML = '<option value="">Escolher um endereço…</option>' + enderecos.map((endereco) => {
+        const titulo = [endereco.rotulo || 'Endereço', textoEndereco(endereco)].filter(Boolean).join(' · ');
+        return `<option value="${esc(endereco.documentId)}">${esc(titulo)}</option>`;
+      }).join('');
+      el('bloco-endereco-salvo').classList.remove('d-none');
+      seletor.addEventListener('change', () => {
+        const endereco = enderecos.find((item) => item.documentId === seletor.value);
+        if (!endereco) return;
+        el('c-entrega-nome').value = endereco.destinatario || nomeUsuario();
+        el('c-entrega-telefone').value = mascaraTelefone(endereco.telefone || getUsuario()?.telefone);
+        el('c-entrega-endereco').value = textoEndereco(endereco);
+      });
+    } catch (erro) {
+      toast(`Não foi possível carregar seus endereços salvos: ${erro.message}`, 'erro');
+    }
   }
 
   async function migrarCarrinhoLegado() {
@@ -131,6 +167,7 @@ async function iniciarCheckout({ loja, aoSucesso }) {
     el('c-entrega-nome').value = nomeUsuario();
     el('c-entrega-telefone').value = mascaraTelefone(getUsuario()?.telefone);
   }
+  await carregarEnderecosSalvos();
   atualizar();
   return { atualizar };
 }

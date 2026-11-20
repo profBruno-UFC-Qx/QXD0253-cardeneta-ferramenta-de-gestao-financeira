@@ -13,20 +13,22 @@ function progresso(p) {
 }
 
 function cartaoPedido(p) {
-  return `<article class="card border-0 shadow-sm p-3">
-    <div class="d-flex align-items-center justify-content-between gap-3">
-      <div><p class="fw-bold mb-1">Pedido #${p.id}</p><p class="text-secondary small mb-0">${dataHora(p.createdAt)} · ${esc(PAGAMENTOS[p.formaPagamento] || p.formaPagamento)}</p></div>
-      ${badgeStatus(p.status)}
-    </div>
-    ${progresso(p)}
-    ${detalheModalidade(p)}
-    <ul class="mt-3 mb-0 vstack gap-2 small ps-3">${(p.itens || []).map((i) =>
+  return `<div class="col">
+    <article class="card border-0 shadow-sm p-3 h-100">
+      <div class="d-flex align-items-center justify-content-between gap-3">
+        <div><p class="fw-bold mb-1">Pedido #${p.id}</p><p class="text-secondary small mb-0">${dataHora(p.createdAt)} · ${esc(PAGAMENTOS[p.formaPagamento] || p.formaPagamento)}</p></div>
+        ${badgeStatus(p.status)}
+      </div>
+      ${progresso(p)}
+      ${detalheModalidade(p)}
+      <ul class="mt-3 mb-0 vstack gap-2 small ps-3">${(p.itens || []).map((i) =>
     `<li><div class="d-flex justify-content-between gap-3"><span>${i.quantidade}× ${esc(i.nomeProduto || 'Item removido')}</span><span class="text-secondary">${dinheiro((Number(i.precoUnitario) + (i.adicionais || []).reduce((s, a) => s + Number(a.preco) * Math.max(1, Number(a.quantidade) || 1), 0)) * i.quantidade)}</span></div>${Array.isArray(i.adicionais) && i.adicionais.length ? `<ul class="text-secondary small mb-0">${i.adicionais.map((a) => `<li>${Math.max(1, Number(a.quantidade) || 1)}× ${esc(a.nome)} · ${dinheiro(Number(a.preco) * Math.max(1, Number(a.quantidade) || 1))}</li>`).join('')}</ul>` : ''}</li>`).join('')}
-      ${Number(p.taxaEntrega) > 0 ? `<li class="d-flex justify-content-between gap-3"><span class="text-secondary">Taxa de entrega</span><span class="text-secondary">${dinheiro(p.taxaEntrega)}</span></li>` : ''}
-    </ul>
-    ${p.observacoes ? `<p class="text-secondary mt-2 small mb-0">Obs.: ${esc(p.observacoes)}</p>` : ''}
-    <div class="mt-3 d-flex justify-content-between border-top border-secondary-subtle pt-3 fw-semibold"><span>Total</span><span>${dinheiro(p.total)}</span></div>
-  </article>`;
+        ${Number(p.taxaEntrega) > 0 ? `<li class="d-flex justify-content-between gap-3"><span class="text-secondary">Taxa de entrega</span><span class="text-secondary">${dinheiro(p.taxaEntrega)}</span></li>` : ''}
+      </ul>
+      ${p.observacoes ? `<p class="text-secondary mt-2 small mb-0">Obs.: ${esc(p.observacoes)}</p>` : ''}
+      <div class="mt-3 d-flex justify-content-between border-top border-secondary-subtle pt-3 fw-semibold"><span>Total</span><span>${dinheiro(p.total)}</span></div>
+    </article>
+  </div>`;
 }
 
 async function carregar() {

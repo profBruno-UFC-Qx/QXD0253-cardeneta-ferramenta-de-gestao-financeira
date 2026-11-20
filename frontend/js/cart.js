@@ -1,4 +1,27 @@
-let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
+function chaveArmazenamentoCarrinho() {
+  const usuario = typeof getUsuario === 'function' ? getUsuario() : null;
+  return usuario?.id ? `carrinho_usuario_${usuario.id}` : 'carrinho_visitante';
+}
+function lerCarrinhoArmazenado(chave) {
+  try {
+    const itens = JSON.parse(localStorage.getItem(chave) || '[]');
+    return Array.isArray(itens) ? itens : [];
+  } catch {
+    return [];
+  }
+}
+let chaveCarrinhoAtiva = chaveArmazenamentoCarrinho();
+const carrinhoLegado = localStorage.getItem('carrinho');
+if (carrinhoLegado !== null) {
+  if (localStorage.getItem(chaveCarrinhoAtiva) === null) {
+    try {
+      const legado = JSON.parse(carrinhoLegado);
+      if (Array.isArray(legado)) localStorage.setItem(chaveCarrinhoAtiva, JSON.stringify(legado));
+    } catch { /* Ignora dados antigos inválidos. */ }
+  }
+  localStorage.removeItem('carrinho');
+}
+let carrinho = lerCarrinhoArmazenado(chaveCarrinhoAtiva);
 function adicionaisItem(item) { return Array.isArray(item.adicionais) ? item.adicionais : []; }
 function idCatalogo(adicional) { return adicional.documentId || adicional.id; }
 function quantidadeAdicional(adicional) { return Math.max(1, Number(adicional.quantidade) || 1); }
@@ -10,7 +33,7 @@ function precoUnitarioCarrinho(item) {
   return Number(item.preco) + adicionaisItem(item).reduce((soma, adicional) => soma + Number(adicional.preco || 0) * quantidadeAdicional(adicional), 0);
 }
 function salvarCarrinho() {
-  localStorage.setItem('carrinho', JSON.stringify(carrinho));
+  localStorage.setItem(chaveCarrinhoAtiva, JSON.stringify(carrinho));
   atualizarBadge();
 }
 function adicionarAoCarrinho(produto, quantidade = 1, idsAdicionais = []) {
@@ -64,7 +87,7 @@ function limparCarrinho() {
   salvarCarrinho();
 }
 function getCarrinho() {
-  return JSON.parse(localStorage.getItem('carrinho') || '[]');
+  return lerCarrinhoArmazenado(chaveCarrinhoAtiva);
 }
 function quantidadeNoCarrinho(id) {
   return carrinho.filter((i) => i.documentId === id).reduce((soma, i) => soma + i.quantidade, 0);
