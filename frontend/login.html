@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="min-vh-100 bg-light" data-area="auth" data-papeis="">
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-3 d-print-none z-3"></div>
+
+  <main id="conteudo" class="container-fluid p-0 h-100 min-vh-100">
+    <div class="row g-0 min-vh-100">
+
+      <!-- Banner igual ao cadastro: col-lg-5 -->
+      <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between p-5 position-relative auth-banner">
+        <div class="z-1">
+          <!-- Nome da lanchonete em branco (text-white) -->
+          <a href="index.html" class="d-inline-flex align-items-center gap-2 text-white text-decoration-none">
+            <span class="bg-warning rounded-3 p-1 d-flex align-items-center justify-content-center"
+              style="width:40px;height:40px">
+              <span class="material-symbols-outlined fs-5">storefront</span>
+            </span>
+            <span class="fw-bold fs-4" data-marca-nome>Caderneta</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulário igual ao cadastro: col-lg-7 -->
+      <div class="col-12 col-lg-7 d-flex align-items-center justify-content-center p-4 p-md-5 bg-white">
+        <div class="w-100" style="max-width: 500px;">
+
+          <div class="d-lg-none text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-warning rounded-3 mb-2 shadow-sm"
+              style="width:48px;height:48px">
+              <span class="material-symbols-outlined fs-3">storefront</span>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h1 class="fs-3 fw-bold mb-2">Bem-vindo de volta</h1>
+            <p class="text-secondary">Insira seus dados para acessar sua conta.</p>
+          </div>
+
+          <form id="form-login" class="vstack gap-3">
+            <div id="erro" class="d-none rounded-3 bg-danger-subtle p-3 small text-danger-emphasis" role="alert"></div>
+
+            <div>
+              <label class="form-label fw-medium" for="identifier">E-mail</label>
+              <input id="identifier" type="email" class="form-control form-control-lg bg-light border-0" required
+                autocomplete="email" placeholder="seu@email.com">
+            </div>
+
+            <div>
+              <label class="form-label fw-medium" for="senha">Senha</label>
+              <div class="position-relative">
+                <input id="senha" type="password" class="form-control form-control-lg pe-5 bg-light border-0" required
+                  autocomplete="current-password" placeholder="Sua senha">
+                <button type="button"
+                  class="btn btn-link text-secondary position-absolute end-0 top-50 translate-middle-y me-1 p-2"
+                  data-toggle-password="senha" aria-label="Mostrar senha" aria-pressed="false"><span
+                    class="material-symbols-outlined">visibility</span></button>
+              </div>
+            </div>
+
+            <button id="btn-enviar" type="submit"
+              class="btn btn-warning btn-lg w-100 fw-bold rounded-3 mt-2">Entrar</button>
+          </form>
+
+          <div class="text-center mt-4">
+            <p class="text-secondary small mb-0">Ainda não tem conta?
+              <a class="fw-bold text-warning-emphasis text-decoration-none" href="cadastro.html">Cadastre-se grátis</a>
+            </p>
+            <hr>
+            <p class="text-secondary small mb-0">
+              <a class="fw-bold text-warning-emphasis text-decoration-none" href="index.html">Acessar Cardapio</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/login.js"></script>
+</body>
+
+</html>

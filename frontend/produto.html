@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="">
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
+    <a href="index.html"
+      class="text-secondary mb-3 d-inline-flex align-items-center gap-2 small text-decoration-none fw-medium"><span
+        class="material-symbols-outlined fs-6">arrow_back</span>Voltar ao cardápio</a>
+    <div id="produto" class="row g-4 row-cols-1 row-cols-md-2 align-items-start"></div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/produto.js"></script>
+</body>
+
+</html>

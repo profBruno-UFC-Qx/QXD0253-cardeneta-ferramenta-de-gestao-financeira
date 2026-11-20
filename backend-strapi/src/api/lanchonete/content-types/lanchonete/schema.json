@@ -1,0 +1,16 @@
+{
+  "kind": "singleType",
+  "collectionName": "lanchonetes",
+  "info": { "singularName": "lanchonete", "pluralName": "lanchonetes", "displayName": "Lanchonete" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "nome": { "type": "string", "required": true },
+    "descricao": { "type": "text" },
+    "telefone": { "type": "string" },
+    "endereco": { "type": "string" },
+    "horario": { "type": "string" },
+    "aberta": { "type": "boolean", "default": true },
+    "taxaEntrega": { "type": "decimal", "default": 0, "min": 0 },
+    "logo": { "type": "media", "multiple": false, "allowedTypes": ["images"] }
+  }
+}

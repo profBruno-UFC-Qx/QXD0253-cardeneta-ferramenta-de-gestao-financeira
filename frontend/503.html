@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serviço indisponível — Caderneta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/erros.css">
+</head>
+
+<body class="app-error-page">
+  <header class="app-error-header"><a class="app-error-brand" href="/index.html"><span
+        class="app-error-brand-mark"><span class="material-symbols-outlined">storefront</span></span><span>BG
+        Lanches</span></a><span class="app-error-caption">Caderneta · pedidos online</span></header>
+  <main class="app-error-main">
+    <section class="app-error-card" aria-labelledby="titulo-erro">
+      <div class="app-error-art"><span class="app-error-art-label">Conexão</span>
+        <p class="app-error-code">503</p><span class="app-error-symbol"><span
+            class="material-symbols-outlined">cloud_off</span></span>
+      </div>
+      <div class="app-error-content"><span class="app-error-status">Serviço indisponível</span>
+        <h1 class="app-error-title" id="titulo-erro">Não conseguimos conectar agora</h1>
+        <p class="app-error-message">O serviço está temporariamente indisponível. Verifique se o backend está iniciado e
+          tente novamente.</p>
+        <div class="app-error-note"><span class="material-symbols-outlined">info</span><span>Na execução local, confirme
+            que o Strapi está ativo em <strong>localhost:1337</strong>.</span></div>
+        <div class="app-error-actions"><a class="btn btn-warning" href="/index.html"><span
+              class="material-symbols-outlined align-middle me-1">refresh</span>Tentar Novamente.</a><a
+            class="btn btn-outline-secondary" href="/index.html">Voltar ao Cardápio.</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="app-error-footer">O botão de nova tentativa volta ao Cardápio e consulta o servidor novamente.</footer>
+</body>
+
+</html>

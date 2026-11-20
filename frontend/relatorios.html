@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatórios - Caderneta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/relatorios-impressao.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
+  </div>
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
+    <header class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1 class="fs-3 fw-bold mb-1">Relatórios</h1>
+        <p id="periodo-label" class="text-secondary small mb-0">Indicadores do negócio</p>
+      </div>
+      <div class="d-flex gap-2 d-print-none"><button id="exportar" class="btn btn-outline-secondary"><span
+            class="material-symbols-outlined align-middle fs-5">download</span> CSV</button><button id="imprimir"
+          class="btn btn-warning fw-semibold"><span class="material-symbols-outlined align-middle fs-5">print</span>
+          Imprimir</button></div>
+    </header>
+    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-row align-items-end gap-3 d-print-none">
+      <div><label class="form-label small" for="de">De</label><input id="de" type="date" class="form-control" required>
+      </div>
+      <div><label class="form-label small" for="ate">Até</label><input id="ate" type="date" class="form-control"
+          required></div><button class="btn btn-dark" type="submit">Atualizar relatório</button>
+    </form>
+    <section id="kpis" class="row g-3"></section>
+    <section class="row g-3">
+      <div class="col-12 col-xl-7">
+        <article class="card border-0 shadow-sm h-100">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Faturamento por dia</h2>
+          </div>
+          <div id="grafico-dia" class="p-3"></div>
+        </article>
+      </div>
+      <div class="col-12 col-xl-5">
+        <article class="card border-0 shadow-sm h-100">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Vendas por forma de pagamento</h2>
+          </div>
+          <div id="grafico-pagamento" class="p-3"></div>
+        </article>
+      </div>
+    </section>
+    <section class="row g-3">
+      <div class="col-12 col-lg-4">
+        <article class="card border-0 shadow-sm h-100">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Vendas por modalidade</h2>
+          </div>
+          <div id="grafico-modalidade" class="p-3"></div>
+        </article>
+      </div>
+      <div class="col-12 col-lg-4">
+        <article class="card border-0 shadow-sm h-100">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Vendas por horário</h2>
+          </div>
+          <div id="grafico-horario" class="p-3"></div>
+        </article>
+      </div>
+      <div class="col-12 col-lg-4">
+        <article class="card border-0 shadow-sm h-100">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Despesas por tipo</h2>
+          </div>
+          <div id="grafico-despesas" class="p-3"></div>
+        </article>
+      </div>
+    </section>
+    <section class="row g-3">
+      <div class="col-12 col-xl-6">
+        <article class="card border-0 shadow-sm">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Produtos mais vendidos</h2>
+          </div>
+          <div id="tabela-produtos" class="table-responsive"></div>
+        </article>
+      </div>
+      <div class="col-12 col-xl-6 report-hide-print">
+        <article class="card border-0 shadow-sm">
+          <div class="p-3 border-bottom">
+            <h2 class="fs-6 fw-bold mb-0">Vendas por dia</h2>
+          </div>
+          <div id="tabela-dias" class="table-responsive"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/relatorios.js"></script>
+</body>
+
+</html>

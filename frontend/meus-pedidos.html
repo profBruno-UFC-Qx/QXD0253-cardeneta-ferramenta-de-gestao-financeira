@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus pedidos - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="authenticated,atendente,gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
+    <h1 class="mb-3 fs-4 fw-bold">Meus pedidos</h1>
+    <div id="lista" class="row row-cols-1 row-cols-md-2 g-4"></div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/meus-pedidos.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{
+  "kind": "collectionType",
+  "collectionName": "adicionais",
+  "info": { "singularName": "adicional", "pluralName": "adicionais", "displayName": "Adicional" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "nome": { "type": "string", "required": true, "minLength": 2, "maxLength": 80 },
+    "preco": { "type": "decimal", "required": true, "min": 0, "max": 10000 },
+    "disponivel": { "type": "boolean", "default": true },
+    "produtos": { "type": "relation", "relation": "manyToMany", "target": "api::produto.produto", "mappedBy": "adicionaisCatalogo" }
+  }
+}

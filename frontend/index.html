@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio - Caderneta</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>logo</text></svg>">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light" data-area="loja" data-papeis="">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-3 d-print-none z-3"></div>
+  <main id="conteudo" class="mx-auto w-100 container-xl flex-fill px-3 py-2 py-md-4">
+    <section id="loja-info" class="card mb-3 p-3 p-md-3 border-0 shadow-sm"></section>
+    <div class="input-group mb-3">
+      <span class="input-group-text bg-white"><span class="material-symbols-outlined fs-5">search</span></span>
+      <input id="busca-cardapio" type="search" class="form-control" placeholder="Buscar produto" autocomplete="off"
+        aria-label="Buscar produtos no cardápio">
+    </div>
+    <div id="categorias" class="mb-3 d-flex gap-2 overflow-x-auto px-0 pb-2" style="scrollbar-width:none"></div>
+    <div id="lista" class="row row-cols-2 g-3 pb-3 mb-2 row-cols-md-3 row-cols-xl-4" aria-live="polite"></div>
+    <div id="paginacao-cardapio"></div>
+    <div id="barra-carrinho"
+      class="position-fixed start-50 bottom-0 mb-3 translate-middle-x d-none container-sm d-print-none z-3"></div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/index.js"></script>
+</body>
+
+</html>
