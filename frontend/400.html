@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dados inválidos — Caderneta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/erros.css">
+</head>
+
+<body class="app-error-page">
+  <header class="app-error-header"><a class="app-error-brand" href="/index.html"><span
+        class="app-error-brand-mark"><span class="material-symbols-outlined">storefront</span></span><span>BG
+        Lanches</span></a><span class="app-error-caption">Caderneta · pedidos online</span></header>
+  <main class="app-error-main">
+    <section class="app-error-card" aria-labelledby="titulo-erro">
+      <div class="app-error-art"><span class="app-error-art-label">Dados inválidos</span>
+        <p class="app-error-code">400</p><span class="app-error-symbol"><span
+            class="material-symbols-outlined">edit_note</span></span>
+      </div>
+      <div class="app-error-content"><span class="app-error-status">Requisição inválida</span>
+        <h1 class="app-error-title" id="titulo-erro">Confira os dados enviados</h1>
+        <p class="app-error-message">Não foi possível processar as informações. Verifique os campos e tente novamente.
+        </p>
+        <div class="app-error-note"><span class="material-symbols-outlined">info</span><span>Volte ao formulário para
+            corrigir os dados. O sistema não deve apagar o que você já preencheu.</span></div>
+        <div class="app-error-actions"><button class="btn btn-warning" type="button" onclick="history.back()"><span
+              class="material-symbols-outlined align-middle me-1">arrow_back</span>Voltar ao Formulário.</button><a
+            class="btn btn-outline-secondary" href="/index.html">Ir ao Cardápio.</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="app-error-footer">Se o erro persistir, confira os campos obrigatórios e tente novamente.</footer>
+</body>
+
+</html>

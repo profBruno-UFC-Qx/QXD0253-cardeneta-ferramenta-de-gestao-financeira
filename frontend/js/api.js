@@ -85,11 +85,19 @@ function qs(params) {
 async function api(caminho, { method = 'GET', body, auth = true } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
-  const res = await fetchComRefresh(API_URL + caminho, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  }, auth);
+  let res;
+  try {
+    res = await fetchComRefresh(API_URL + caminho, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    }, auth);
+  } catch {
+    const erro = new Error('Não foi possível conectar ao servidor. Verifique se o Strapi está iniciado e tente novamente.');
+    erro.status = 503;
+    erro.code = 'STRAPI_UNAVAILABLE';
+    throw erro;
+  }
   if (res.status === 204) return null;
   const json = await res.json().catch(() => null);
   if (!res.ok) {
@@ -99,8 +107,19 @@ async function api(caminho, { method = 'GET', body, auth = true } = {}) {
         window.location.href = 'login.html?next=' + encodeURIComponent(paginaAtual());
       }
     }
-    const mensagem = json?.error?.message || `Erro na requisição (${res.status})`;
-    throw new Error(TRADUCOES[mensagem] || mensagem);
+    const mensagensStatus = {
+      400: 'Os dados enviados são inválidos. Confira os campos e tente novamente.',
+      401: 'Sua sessão expirou ou você precisa entrar para continuar.',
+      403: 'Sua conta não tem permissão para acessar esta área.',
+      404: 'O recurso solicitado não foi encontrado.',
+      500: 'O servidor encontrou um erro. Tente novamente em instantes.',
+      503: json?.error?.message || 'O serviço está temporariamente indisponível. Verifique se o Strapi está iniciado.',
+    };
+    const mensagem = json?.error?.message || mensagensStatus[res.status] || `Erro na requisição (${res.status})`;
+    const erro = new Error(TRADUCOES[mensagem] || mensagensStatus[res.status] || mensagem);
+    erro.status = res.status;
+    erro.code = json?.error?.details?.code || null;
+    throw erro;
   }
   return json;
 }

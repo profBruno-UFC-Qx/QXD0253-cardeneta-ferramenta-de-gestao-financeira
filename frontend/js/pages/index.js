@@ -92,6 +92,14 @@ function renderBarra() {
 
 async function iniciar() {
   const lista = el('lista');
+  if (new URLSearchParams(window.location.search).get('rota-invalida') === '1') {
+    const aviso = document.createElement('div');
+    aviso.className = 'alert alert-info py-2 small';
+    aviso.setAttribute('role', 'status');
+    aviso.textContent = 'A rota ou página solicitada não existe. Você está no Cardápio.';
+    el('conteudo').prepend(aviso);
+    window.history.replaceState({}, document.title, 'index.html');
+  }
   lista.innerHTML = estadoVazio('hourglass_top', 'Carregando cardápio...');
   el('busca-cardapio').addEventListener('input', () => { paginaCardapio = 1; renderProdutos(); });
   try {
@@ -107,7 +115,21 @@ async function iniciar() {
     renderCategorias();
     renderProdutos();
   } catch (erro) {
-    lista.innerHTML = estadoVazio('cloud_off', 'Não foi possível carregar o cardápio', esc(erro.message));
+    const codigosHtml = [400, 401, 403, 500, 503];
+    if (codigosHtml.includes(erro.status)) {
+      window.location.replace(`/${erro.status}.html`);
+      return;
+    }
+    const indisponivel = erro.status === 503 || erro.code === 'STRAPI_UNAVAILABLE';
+    lista.innerHTML = `<div class="col-12">
+      <section class="card border-0 shadow-sm p-4 p-md-5 text-center" role="alert" aria-labelledby="erro-cardapio-titulo">
+        <span class="material-symbols-outlined display-5 text-secondary mb-3">${indisponivel ? 'cloud_off' : 'warning'}</span>
+        <p class="small fw-bold text-warning-emphasis text-uppercase mb-2">${indisponivel ? 'Serviço indisponível · erro 503' : 'Não foi possível carregar'}</p>
+        <h2 class="fs-5 fw-bold" id="erro-cardapio-titulo">${indisponivel ? 'Não conseguimos conectar ao servidor' : 'Não foi possível carregar o cardápio'}</h2>
+        <p class="text-secondary mb-3">${indisponivel ? 'Verifique se o Strapi está iniciado em localhost:1337 e tente novamente.' : esc(erro.message)}</p>
+        <div><button class="btn btn-warning fw-semibold" type="button" onclick="location.reload()"><span class="material-symbols-outlined align-middle me-1">refresh</span>Tentar novamente</button></div>
+      </section>
+    </div>`;
   }
   el('categorias').addEventListener('click', (e) => {
     const botao = e.target.closest('[data-categoria]');

@@ -11,11 +11,22 @@ function graficoDias(serie) {
   const max = Math.max(1, ...serie.map((d) => d.faturamento));
   return `<div class="chart-bars" role="img" aria-label="Faturamento por dia">${serie.map((d) => `<div class="chart-bar-col" title="${esc(d.data)}: ${dinheiro(d.faturamento)}"><span class="chart-bar-value">${dinheiro(d.faturamento)}</span><div class="chart-bar" style="height:${Math.max(5, d.faturamento / max * 100)}%"></div><span class="chart-bar-label">${new Date(`${d.data}T12:00:00`).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span></div>`).join('')}</div>`;
 }
+function tabelaImpressao(items, coluna, tituloValor = 'Faturamento', format = dinheiro) {
+  if (!items?.length) return '<p class="report-print-only small text-secondary">Sem dados neste período.</p>';
+  const total = items.reduce((soma, item) => soma + (Number(item.valor) || 0), 0);
+  return `<table class="table table-sm table-bordered report-print-only report-print-table"><thead><tr><th scope="col">${esc(coluna)}</th><th scope="col" class="text-end">${esc(tituloValor)}</th></tr></thead><tbody>${items.map((item) => `<tr><td>${esc(item.chave)}</td><td class="text-end">${format(item.valor)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total</th><th class="text-end">${format(total)}</th></tr></tfoot></table>`;
+}
+function tabelaDiasImpressao(items) {
+  if (!items?.length) return '<p class="report-print-only small text-secondary">Sem vendas neste período.</p>';
+  const totalPedidos = items.reduce((soma, item) => soma + (Number(item.pedidos) || 0), 0);
+  const totalVendas = items.reduce((soma, item) => soma + (Number(item.faturamento) || 0), 0);
+  return `<table class="table table-sm table-bordered report-print-only report-print-table"><thead><tr><th>Data</th><th class="text-end">Pedidos</th><th class="text-end">Faturamento</th></tr></thead><tbody>${items.map((item) => `<tr><td>${new Date(`${item.data}T12:00:00`).toLocaleDateString('pt-BR')}</td><td class="text-end">${item.pedidos}</td><td class="text-end">${dinheiro(item.faturamento)}</td></tr>`).join('')}</tbody><tfoot><tr><th>Total do período</th><th class="text-end">${totalPedidos}</th><th class="text-end">${dinheiro(totalVendas)}</th></tr></tfoot></table>`;
+}
 function tabelaProdutos(items) {
-  return items?.length ? `<table class="table align-middle mb-0"><thead class="table-light"><tr><th class="ps-3">Produto</th><th class="text-end pe-3">Unidades</th></tr></thead><tbody>${items.map((p) => `<tr><td class="ps-3">${esc(p.nome)}</td><td class="text-end pe-3 fw-semibold">${p.quantidade}</td></tr>`).join('')}</tbody></table>` : `<div class="p-3">${estadoVazio('lunch_dining', 'Sem produtos vendidos')}</div>`;
+  return items?.length ? `<table class="table table-sm align-middle mb-0 report-data-table"><thead><tr><th>Produto</th><th class="text-end">Unidades</th></tr></thead><tbody>${items.map((p) => `<tr><td>${esc(p.nome)}</td><td class="text-end fw-semibold">${p.quantidade}</td></tr>`).join('')}</tbody><tfoot><tr><th>Total</th><th class="text-end">${items.reduce((soma, p) => soma + (Number(p.quantidade) || 0), 0)}</th></tr></tfoot></table>` : `<div class="p-3">${estadoVazio('lunch_dining', 'Sem produtos vendidos')}</div>`;
 }
 function tabelaDias(items) {
-  return items?.length ? `<table class="table align-middle mb-0"><thead class="table-light"><tr><th class="ps-3">Data</th><th class="text-end">Pedidos</th><th class="text-end pe-3">Faturamento</th></tr></thead><tbody>${items.map((d) => `<tr><td class="ps-3">${new Date(`${d.data}T12:00:00`).toLocaleDateString('pt-BR')}</td><td class="text-end">${d.pedidos}</td><td class="text-end pe-3 fw-semibold">${dinheiro(d.faturamento)}</td></tr>`).join('')}</tbody></table>` : `<div class="p-3">${estadoVazio('calendar_month', 'Sem vendas no período')}</div>`;
+  return items?.length ? `<table class="table table-sm align-middle mb-0 report-data-table"><thead><tr><th>Data</th><th class="text-end">Pedidos</th><th class="text-end">Faturamento</th></tr></thead><tbody>${items.map((d) => `<tr><td>${new Date(`${d.data}T12:00:00`).toLocaleDateString('pt-BR')}</td><td class="text-end">${d.pedidos}</td><td class="text-end fw-semibold">${dinheiro(d.faturamento)}</td></tr>`).join('')}</tbody><tfoot><tr><th>Total</th><th class="text-end">${items.reduce((soma, d) => soma + (Number(d.pedidos) || 0), 0)}</th><th class="text-end">${dinheiro(items.reduce((soma, d) => soma + (Number(d.faturamento) || 0), 0))}</th></tr></tfoot></table>` : `<div class="p-3">${estadoVazio('calendar_month', 'Sem vendas no período')}</div>`;
 }
 function render(d) {
   relatorioAtual = d;
@@ -23,11 +34,12 @@ function render(d) {
   $r('periodo-label').textContent = `Período: ${new Date(`${d.periodo.de}T12:00:00`).toLocaleDateString('pt-BR')} até ${new Date(`${d.periodo.ate}T12:00:00`).toLocaleDateString('pt-BR')}`;
   $r('kpis').innerHTML = cartoesFinanceiros(r, 'col-6 col-xl-3', 'fs-5')
     + `<div class="col-6 col-xl-3"><article class="card app-kpi-card border-0 p-3 h-100"><p class="small text-secondary mb-2">Pedidos · Ticket médio</p><strong class="fs-5">${r.pedidos} <span class="text-secondary fs-6">· ${dinheiro(r.ticketMedio)}</span></strong></article></div>`;
-  $r('grafico-dia').innerHTML = graficoDias(d.vendasPorDia);
-  $r('grafico-pagamento').innerHTML = barraLista(d.porPagamento);
-  $r('grafico-modalidade').innerHTML = barraLista(d.porModalidade);
-  $r('grafico-horario').innerHTML = barraLista(d.porHora);
-  $r('grafico-despesas').innerHTML = barraLista((d.despesasPorTipo || []).map((x) => ({ chave: ({ insumo: 'Insumos', conta_fixa: 'Contas fixas', outros: 'Outros' })[x.chave] || x.chave, valor: x.valor })));
+  $r('grafico-dia').innerHTML = `<div class="report-screen-chart">${graficoDias(d.vendasPorDia)}</div>${tabelaDiasImpressao(d.vendasPorDia)}`;
+  $r('grafico-pagamento').innerHTML = `<div class="report-screen-chart">${barraLista(d.porPagamento)}</div>${tabelaImpressao(d.porPagamento, 'Forma de pagamento')}`;
+  $r('grafico-modalidade').innerHTML = `<div class="report-screen-chart">${barraLista(d.porModalidade)}</div>${tabelaImpressao(d.porModalidade, 'Modalidade')}`;
+  $r('grafico-horario').innerHTML = `<div class="report-screen-chart">${barraLista(d.porHora)}</div>${tabelaImpressao(d.porHora, 'Horário')}`;
+  const despesasPorTipo = (d.despesasPorTipo || []).map((x) => ({ chave: ({ insumo: 'Insumos', conta_fixa: 'Contas fixas', outros: 'Outros' })[x.chave] || x.chave, valor: x.valor }));
+  $r('grafico-despesas').innerHTML = `<div class="report-screen-chart">${barraLista(despesasPorTipo)}</div>${tabelaImpressao(despesasPorTipo, 'Tipo de despesa', 'Valor')}`;
   $r('tabela-produtos').innerHTML = tabelaProdutos(d.produtosMaisVendidos);
   $r('tabela-dias').innerHTML = tabelaDias(d.vendasPorDia);
 }

@@ -15,7 +15,8 @@
 </head>
 
 <body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
-  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
+  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-2 p-3 d-print-none z-3"
+    aria-live="polite">
   </div>
   <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
     <header class="d-flex flex-wrap align-items-end justify-content-between gap-3">
@@ -25,7 +26,7 @@
       </div><button id="btn-nova" class="btn btn-warning fw-semibold"><span
           class="material-symbols-outlined align-middle fs-5">add</span> Nova despesa</button>
     </header>
-    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-wrap align-items-end gap-3 d-print-none">
+    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-row align-items-end gap-3 d-print-none">
       <div><label class="form-label small" for="f-de">De</label><input id="f-de" class="form-control" type="date"></div>
       <div><label class="form-label small" for="f-ate">Até</label><input id="f-ate" class="form-control" type="date">
       </div><button class="btn btn-dark" type="submit">Filtrar</button><button class="btn btn-outline-secondary"

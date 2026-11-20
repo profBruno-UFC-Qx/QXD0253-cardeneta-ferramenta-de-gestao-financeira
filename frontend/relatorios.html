@@ -12,11 +12,11 @@
     rel="stylesheet">
   <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/relatorios-impressao.css">
 </head>
 
 <body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
-  <div id="toasts" class="position-fixed end-0 bottom-0 mb-4 mw-100 vstack gap-2 p-3 d-print-none z-3"
-    aria-live="polite">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
   </div>
   <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
     <header class="d-flex flex-wrap align-items-end justify-content-between gap-3">
@@ -29,7 +29,7 @@
           class="btn btn-warning fw-semibold"><span class="material-symbols-outlined align-middle fs-5">print</span>
           Imprimir</button></div>
     </header>
-    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-wrap align-items-end gap-3 d-print-none">
+    <form id="filtro" class="card border-0 shadow-sm p-3 d-flex flex-row align-items-end gap-3 d-print-none">
       <div><label class="form-label small" for="de">De</label><input id="de" type="date" class="form-control" required>
       </div>
       <div><label class="form-label small" for="ate">Até</label><input id="ate" type="date" class="form-control"
@@ -89,7 +89,7 @@
           <div id="tabela-produtos" class="table-responsive"></div>
         </article>
       </div>
-      <div class="col-12 col-xl-6">
+      <div class="col-12 col-xl-6 report-hide-print">
         <article class="card border-0 shadow-sm">
           <div class="p-3 border-bottom">
             <h2 class="fs-6 fw-bold mb-0">Vendas por dia</h2>

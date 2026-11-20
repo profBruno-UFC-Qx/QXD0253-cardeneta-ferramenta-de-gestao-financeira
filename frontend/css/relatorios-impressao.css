@@ -1,0 +1,103 @@
+.report-print-only { display: none; }
+
+@media print {
+  @page { size: A4 portrait; margin: 8mm; }
+
+  body[data-area="painel"] {
+    display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    color: #111 !important;
+    background: #fff !important;
+    font: 9pt/1.3 Arial, sans-serif !important;
+  }
+  body[data-area="painel"] #conteudo {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  body[data-area="painel"] .d-print-none,
+  body[data-area="painel"] .report-hide-print,
+  body[data-area="painel"] .app-sidebar,
+  body[data-area="painel"] .app-mobile-header,
+  body[data-area="painel"] .app-mobile-nav,
+  body[data-area="painel"] #toasts { display: none !important; }
+
+  body[data-area="painel"] #conteudo > header { display: block !important; margin: 0 0 4mm !important; }
+  body[data-area="painel"] #conteudo > header h1 { margin: 0 0 1mm !important; font-size: 16pt !important; }
+  body[data-area="painel"] #periodo-label { color: #222 !important; font-size: 9pt !important; }
+
+  body[data-area="painel"] #kpis {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2mm !important;
+    margin: 0 0 4mm !important;
+  }
+  body[data-area="painel"] #kpis > * { width: auto !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+  body[data-area="painel"] #kpis .card { min-height: 0 !important; padding: 2mm !important; border: 1px solid #888 !important; border-radius: 0 !important; }
+  body[data-area="painel"] #kpis .card p { margin: 0 0 1mm !important; font-size: 8pt !important; }
+  body[data-area="painel"] #kpis .card strong { font-size: 11pt !important; }
+
+  body[data-area="painel"] #conteudo > section.row { display: block !important; margin: 0 !important; }
+  body[data-area="painel"] #conteudo > section.row > * { width: 100% !important; max-width: none !important; margin: 0 0 3mm !important; padding: 0 !important; }
+  body[data-area="painel"] #conteudo .card {
+    height: auto !important;
+    overflow: visible !important;
+    border: 1px solid #888 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  body[data-area="painel"] #conteudo .card > .p-3.border-bottom {
+    padding: 2mm !important;
+    background: #eee !important;
+    border-bottom: 1px solid #888 !important;
+    break-after: avoid-page;
+  }
+  body[data-area="painel"] #conteudo .card h2 { margin: 0 !important; color: #111 !important; font-size: 9pt !important; }
+  body[data-area="painel"] #conteudo .card > div[id^="grafico-"] { padding: 2mm !important; }
+
+  body[data-area="painel"] .report-screen-chart,
+  body[data-area="painel"] .chart-bars { display: none !important; }
+  body[data-area="painel"] .report-print-only { display: table !important; }
+  body[data-area="painel"] .report-print-only:not(table) { display: block !important; }
+  body[data-area="painel"] .report-data-table,
+  body[data-area="painel"] .report-print-table {
+    display: table !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+    color: #111 !important;
+    font-size: 8.5pt !important;
+  }
+  body[data-area="painel"] .report-data-table th,
+  body[data-area="painel"] .report-data-table td,
+  body[data-area="painel"] .report-print-table th,
+  body[data-area="painel"] .report-print-table td {
+    padding: 1.5mm 2mm !important;
+    border: 1px solid #aaa !important;
+    color: #111 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  body[data-area="painel"] .report-data-table thead,
+  body[data-area="painel"] .report-print-table thead { display: table-header-group; }
+  body[data-area="painel"] .report-data-table tfoot,
+  body[data-area="painel"] .report-print-table tfoot { display: table-footer-group; font-weight: 700; }
+  body[data-area="painel"] .report-data-table th,
+  body[data-area="painel"] .report-print-table th { background: #eee !important; }
+  body[data-area="painel"] .table-responsive { width: 100% !important; overflow: visible !important; }
+  body[data-area="painel"] table,
+  body[data-area="painel"] tr { break-inside: auto; page-break-inside: auto; }
+  body[data-area="painel"] tr { break-inside: avoid; page-break-inside: avoid; }
+  body[data-area="painel"] a { color: inherit !important; text-decoration: none !important; }
+  body[data-area="painel"] * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

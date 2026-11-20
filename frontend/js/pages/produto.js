@@ -51,7 +51,7 @@ function renderProduto() {
             <button id="btn-adicionar" type="button" class="btn btn-warning flex-fill fw-semibold"><span class="material-symbols-outlined align-middle fs-5">add_shopping_cart</span> Adicionar · <span id="subtotal">${dinheiro(preco * quantidade)}</span></button>
           </div>`
       : produto.disponivel
-        ? '<p class="text-secondary small">A equipe pode consultar o produto, mas os pedidos são feitos pela área do cliente.</p>'
+        ? '<p class="text-secondary small">A equipe pode consultar o produto, mas os pedidos são feitos pela área do cliente ou atraves da <a href="balcao.html">Pagina do Balcão.</a></p>'
         : '<div class="alert alert-secondary mb-0">Produto indisponível no momento.</div>'}
     </div>`;
 }
