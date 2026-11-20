@@ -16,16 +16,6 @@
 **/dist/
 **/coverage/
 
-
-
-
-
-**/.tmp/
-!/backend-strapi/.tmp/
-/backend-strapi/.tmp/*
-!/backend-strapi/.tmp/data.db
-
-
 **/*.db
 **/*.db-*
 **/*.sqlite

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lanchonete - Caderneta</title>
+
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="d-md-flex min-vh-100 bg-white" data-area="painel" data-papeis="gerente">
+  <div id="toasts" class="position-fixed end-0 top-0 mt-3 mw-100 vstack gap-2 p-3 d-print-none z-3" aria-live="polite">
+  </div>
+
+  <main id="conteudo" class="w-100 container-fluid flex-fill vstack gap-4 p-3 p-md-4 bg-light">
+    <header class="mx-auto w-100" style="max-width: 1200px;">
+      <h1 class="fs-3 fw-bold mb-1">Dados da lanchonete</h1>
+      <p class="text-secondary small mb-0">As alterações atualizam o cardápio, a taxa exibida no pedido e o recebimento
+        de pedidos.</p>
+    </header>
+
+    <div class="row g-3 align-items-start mx-auto w-100" style="max-width: 1200px;">
+      <section class="col-12 col-xl-4" aria-labelledby="titulo-status">
+        <article class="card border-0 shadow-sm p-3 p-md-4">
+          <h2 id="titulo-status" class="fs-5 fw-bold mb-3">Funcionamento</h2>
+          <span id="estado-loja" class="badge-status badge-aberta mb-3">Carregando status…</span>
+          <p class="small text-secondary mb-0">Quando a lanchonete estiver fechada, clientes não poderão finalizar
+            pedidos. A equipe ainda poderá consultar o sistema.</p>
+        </article>
+        <article class="card border-0 shadow-sm p-3 p-md-4 mt-3">
+          <h2 class="fs-6 fw-bold">Onde as informações aparecem</h2>
+          <p class="small text-secondary mb-0">Nome, logo, telefone, endereço, horário e estado são exibidos no
+            cardápio. A taxa de entrega também é usada no cálculo de pedidos online e de balcão.</p>
+        </article>
+      </section>
+
+      <section class="col-12 col-xl-8" aria-label="Formulário de dados da lanchonete">
+        <form id="form-lanchoneta" class="card border-0 shadow-sm vstack gap-3 p-3 p-md-4">
+          <div id="erro" class="d-none rounded-3 bg-danger-subtle p-3 small text-danger-emphasis" role="alert"></div>
+
+          <div>
+            <label class="form-label fw-medium" for="l-nome">Nome da lanchonete</label>
+            <input id="l-nome" class="form-control" maxlength="120" minlength="2" autocomplete="organization" required>
+          </div>
+
+          <div>
+            <label class="form-label fw-medium" for="l-descricao">Descrição</label>
+            <textarea id="l-descricao" class="form-control" rows="2" maxlength="2000"
+              placeholder="Uma breve apresentação"></textarea>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium" for="l-telefone">Telefone</label>
+              <input id="l-telefone" type="tel" class="form-control" maxlength="30" inputmode="tel"
+                data-mascara="telefone" autocomplete="tel">
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium" for="l-taxa">Taxa de entrega (R$)</label>
+              <input id="l-taxa" type="number" class="form-control" min="0" max="999999.99" step="0.01"
+                inputmode="decimal" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label fw-medium" for="l-endereco">Endereço</label>
+            <input id="l-endereco" class="form-control" maxlength="300" autocomplete="street-address">
+          </div>
+
+          <div>
+            <label class="form-label fw-medium" for="l-horario">Horário de atendimento</label>
+            <textarea id="l-horario" class="form-control" rows="2" maxlength="500"
+              placeholder="Ex.: Todos os dias, das 18h às 23h"></textarea>
+          </div>
+
+          <div class="row g-3 align-items-center">
+            <div class="col-12 col-md-4">
+              <div class="form-label fw-medium">Prévia da logo</div>
+              <div id="logo-previa"
+                class="d-flex align-items-center justify-content-center overflow-hidden rounded-3 border bg-light"
+                style="width:96px;height:96px"></div>
+            </div>
+            <div class="col-12 col-md-8">
+              <label class="form-label fw-medium" for="l-logo">Escolher imagem</label>
+              <input id="l-logo" type="file" class="form-control" accept="image/*">
+              <div class="form-text">A imagem será redimensionada e enviada ao Strapi.</div>
+              <button id="l-remover-logo" type="button" class="btn btn-sm btn-outline-danger mt-2 d-none">Remover
+                logo</button>
+            </div>
+          </div>
+
+          <div class="form-check form-switch border-top pt-3">
+            <input id="l-aberta" class="form-check-input" type="checkbox" role="switch">
+            <label class="form-check-label fw-semibold" for="l-aberta">A lanchonete está aberta e recebendo
+              pedidos</label>
+            <div class="form-text">Desative para pausar a finalização de pedidos de clientes.</div>
+          </div>
+
+          <div class="d-flex justify-content-end border-top pt-3">
+            <button id="btn-salvar" type="submit" class="btn btn-warning fw-semibold" disabled>
+              <span class="material-symbols-outlined align-middle fs-6">save</span> Salvar informações
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pages/lanchonete.js"></script>
+</body>
+
+</html>

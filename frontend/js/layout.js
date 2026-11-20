@@ -9,6 +9,7 @@ const MENU_PAINEL = [
   { href: 'adicionais.html', icone: 'tune', rotulo: 'Adicionais', papeis: ['gerente'] },
   { href: 'categorias.html', icone: 'category', rotulo: 'Categorias', papeis: ['gerente'] },
   { href: 'equipe.html', icone: 'groups', rotulo: 'Equipe', papeis: ['gerente'] },
+  { href: 'lanchonete.html', icone: 'storefront', rotulo: 'Lanchonete', papeis: ['gerente'] },
 ];
 
 const ROTULO_PAPEL = { authenticated: 'Cliente', atendente: 'Atendente', gerente: 'Gerente' };
@@ -152,4 +153,22 @@ function montarLayout() {
   ligarEventosGlobais();
   aplicarMarca();
   return true;
+}
+
+
+function iniciarHeroRotativo() {
+  const banner = document.querySelector('.auth-banner');
+  if (!banner) return;
+
+  let alternar = false;
+  setInterval(() => {
+    alternar = !alternar;
+    banner.classList.toggle('alternar', alternar);
+  }, 6000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', iniciarHeroRotativo);
+} else {
+  iniciarHeroRotativo();
 }

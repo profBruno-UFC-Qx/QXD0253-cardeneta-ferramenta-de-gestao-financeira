@@ -124,16 +124,44 @@ body[data-area="painel"] #conteudo { background-color: var(--app-canvas) !import
 .app-page-content { padding-bottom: 1.5rem !important; }
 
 .auth-banner {
-  --auth-hero-image: none;
   isolation: isolate;
   overflow: hidden;
   color: #fff;
-  background-color: #34302a;
-  background-image: linear-gradient(180deg, rgba(20, 24, 29, .22) 0%, rgba(20, 24, 29, .72) 100%), var(--auth-hero-image);
+  background-color: #1a1a1a;
+  border-right: 1px solid var(--app-border);
+  position: relative;
+}
+
+.auth-banner::before,
+.auth-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-position: center;
   background-size: cover;
-  border-right: 1px solid var(--app-border);
+  transition: opacity 1.2s ease-in-out;
+  z-index: 0;
+  pointer-events: none;
 }
+
+.auth-banner::before {
+  background-image:
+    linear-gradient(180deg, rgba(20,24,29,.10) 0%, rgba(20,24,29,.45) 100%),
+    url('../images/hero-feitonabrasa.jpg');
+  opacity: 1;
+}
+
+.auth-banner::after {
+  background-image:
+    linear-gradient(180deg, rgba(20,24,29,.10) 0%, rgba(20,24,29,.45) 100%),
+    url('../images/hero-inesquecivel.webp');
+  opacity: 0;
+}
+
+.auth-banner.alternar::before { opacity: 0; }
+.auth-banner.alternar::after  { opacity: 1; }
+
+.auth-banner > * { position: relative; z-index: 2; }
 .auth-banner-copy { max-width: 34rem; text-shadow: 0 2px 18px rgba(0, 0, 0, .24); }
 .bg-warning-subtle { background-color: rgba(243, 180, 0, .15) !important; }
 

@@ -8,6 +8,8 @@ const CONTA = ['me', 'atualizar'];
 const FINANCEIRO = api('despesa', CRUD);
 const ADICIONAIS = api('adicional', CRUD);
 const RELATORIOS = ['api::relatorio.relatorio.resumo'];
+const CONFIGURAR_LANCHONETE = api('lanchonete', ['gerenciar']);
+const MUTACOES_CORE_LANCHONETE = api('lanchonete', ['create', 'update', 'delete']);
 
 
 const LEITURA_PUBLICA = [
@@ -46,6 +48,7 @@ const PERMISSOES = {
     ...FINANCEIRO,
     ...ADICIONAIS,
     ...RELATORIOS,
+    ...CONFIGURAR_LANCHONETE,
     ...api('conta', CONTA),
     'plugin::upload.content-api.upload',
     'plugin::upload.content-api.destroy',
@@ -58,6 +61,8 @@ const UPLOAD_ACOES = ['upload', 'find', 'findOne', 'destroy']
 const EQUIPE_ACOES = api('equipe', ['listar', 'criar', 'atualizar']);
 const PERMISSOES_NEGADAS = {
   public: [
+    ...MUTACOES_CORE_LANCHONETE,
+    ...CONFIGURAR_LANCHONETE,
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
@@ -67,6 +72,8 @@ const PERMISSOES_NEGADAS = {
     ...UPLOAD_ACOES,
   ],
   authenticated: [
+    ...MUTACOES_CORE_LANCHONETE,
+    ...CONFIGURAR_LANCHONETE,
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'update', 'delete']),
     ...EQUIPE_ACOES,
@@ -76,6 +83,8 @@ const PERMISSOES_NEGADAS = {
     ...UPLOAD_ACOES,
   ],
   atendente: [
+    ...MUTACOES_CORE_LANCHONETE,
+    ...CONFIGURAR_LANCHONETE,
     ...api('categoria', ['create', 'update', 'delete']),
     ...api('produto', ['create', 'delete']),
     ...EQUIPE_ACOES,
@@ -83,6 +92,9 @@ const PERMISSOES_NEGADAS = {
     ...api('adicional', ['create', 'update', 'delete']),
     ...RELATORIOS,
     ...UPLOAD_ACOES,
+  ],
+  gerente: [
+    ...MUTACOES_CORE_LANCHONETE,
   ],
 };
 
